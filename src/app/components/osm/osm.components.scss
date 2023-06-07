@@ -1,0 +1,16 @@
+.map-container {
+  width:1500px;
+  height:700px;
+  background-color:white;
+  border:1px solid black;
+  position:relative;
+}
+
+.map-frame {
+  border: 2px solid black;
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+}

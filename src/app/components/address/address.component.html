@@ -1,0 +1,50 @@
+<div class="grid justify-content-center">
+  <div class="md:col-12">
+    <div class="card p-fluid">
+      <h5>Delivery point</h5>
+      <div class=" p-formgrid grid">
+        <div class="field col md:col-3">
+          <label htmlFor="state">Country</label>
+          <p-dropdown [options]="dropdownItems" optionLabel="name" [(ngModel)]="selectedScope"></p-dropdown>
+        </div>
+        <div class="field col md:col-3">
+          <label htmlFor="city">City</label>
+          <p-dropdown [options]="dropdownItems" optionLabel="name" [(ngModel)]="selectedScope"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-formgrid grid">
+        <div class="field col md:col-5">
+          <label htmlFor="street">Street</label>
+          <input pInputText id="street" type="text" />
+        </div>
+        <div class="field col md:col-1">
+          <label htmlFor="streetNumber">Number</label>
+          <input pInputText id="streetNumber" type="text" />
+        </div>
+        <div class="field col-12 md:col-1">
+          <label htmlFor="zip">Zip</label>
+          <input pInputText id="zip" type="text" />
+        </div>
+        <div class="field col-12 md:col-2">
+          <label htmlFor="deliveryPointAlias">Delivery Point alis</label>
+          <input [required]="true" pInputText id="deliveryPointAlias" type="text" />
+
+        </div>
+      </div>
+      <div class="p-formgrid grid">
+        <div class="field col-12 md:col-2">
+          <button pButton pRipple label="Register delivery point" icon="pi pi-plus" class="p-button-success mr-2" ></button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+

@@ -1,0 +1,182 @@
+<div class="surface-0 flex justify-content-center">
+  <div id="home" class="landing-wrapper overflow-hidden">
+
+    <div
+      class="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static mb-3"
+    >
+      <a class="flex align-items-center" href="#">
+        <img
+          src="assets/layout/images/{{
+            layoutService.config.colorScheme === 'light'
+              ? 'logo-dark'
+              : 'logo-white'
+          }}.svg"
+          alt="FoodWasteRED Logo"
+          height="50"
+          class="mr-0 lg:mr-2"
+        /><span class="text-900 font-medium text-2xl line-height-3 mr-8"
+          >FoodWasteRED</span
+        >
+      </a>
+      <a
+        pRipple
+        class="cursor-pointer block lg:hidden text-700"
+        pStyleClass="@next"
+        enterClass="hidden"
+        leaveToClass="hidden"
+      >
+        <i class="pi pi-bars text-4xl"></i>
+      </a>
+      <div
+        class="align-items-center surface-0 flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full left-0 px-6 lg:px-0 z-2"
+        style="top: 120px"
+      >
+        <ul
+          class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row cursor-pointer"
+        ></ul>
+      </div>
+    </div>
+
+    <div class="surface-ground flex align-items-center">
+
+      <div class="flex flex-column align-items-center justify-content-center">
+        <div class="col-12 md:col-6">
+          <div class="card p-fluid">
+            <h5>User details</h5>
+            <div class="p-fluid p-formgrid grid">
+              <div class="field col-12 md:col-3">
+                <label htmlFor="name1">Name</label>
+                <input
+                  pInputText
+                  id="name1"
+                  type="text"
+                  [(ngModel)]="registrationInput.userName"
+                  [required]="true"
+                />
+              </div>
+              <div class="field col-12 md:col-3">
+                <label htmlFor="email1">Email</label>
+                <input
+                  pInputText
+                  id="email1"
+                  type="text"
+                  [(ngModel)]="registrationInput.email"
+                />
+              </div>
+              <div class="field col-12 md:col-3">
+                <label htmlFor="usertype">User scope</label>
+                <p-dropdown
+                  [options]="userTypeDropdown"
+                  optionLabel="userType"
+                  [(ngModel)]="selectedScope"
+                  [required]="true"
+                ></p-dropdown>
+              </div>
+              <div class="field col-12 md:col-3">
+                <label htmlFor="name1">Password</label>
+                <input
+                  pInputText
+                  id="password"
+                  type="password"
+                  [(ngModel)]="registrationInput.connectionSecureString"
+                  [required]="true"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6">
+          <div class="card p-fluid">
+            <h5>Represented Organisation</h5>
+            <div class="p-fluid p-formgrid grid">
+              <div class="field col-12 md:col-6">
+                <label htmlFor="orgName">Organisation Name</label>
+                <input
+                  pInputText
+                  id="orgName"
+                  type="text"
+                  [(ngModel)]="registrationInput.organizationName"
+                  [required]="true"
+                />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label htmlFor="fic">Fiscal Identification Code</label>
+                <input
+                  pInputText
+                  id="fic"
+                  type="text"
+                  [(ngModel)]="registrationInput.fic"
+                  [required]="true"
+                />
+              </div>
+              <div class="field col-12">
+                <label htmlFor="orgDescription">Description</label>
+                <input
+                  pInputTextarea
+                  id="orgDescription"
+                  type="text"
+                  [(ngModel)]="registrationInput.description"
+                />
+              </div>
+              <div class="field col-12 md:col-4">
+                <label htmlFor="contactPerson">Contact person full Name</label>
+                <input
+                  pInputText
+                  id="contactPerson"
+                  type="text"
+                  [(ngModel)]="registrationInput.contactPerson"
+                  [required]="true"
+                />
+              </div>
+              <div class="field col-12 md:col-4">
+                <label htmlFor="contactPersonEmail">Contact person email</label>
+                <input
+                  pInputText
+                  id="contactPersonEmail"
+                  type="text"
+                  [(ngModel)]="registrationInput.contactEmail"
+                  [required]="true"
+                />
+              </div>
+              <div class="field col-12 md:col-4">
+                <label htmlFor="contactPersonPhone">Contact person phone</label>
+                <input
+                  pInputText
+                  id="contactPersonPhone"
+                  type="text"
+                  [(ngModel)]="registrationInput.contactPhone"
+                />
+              </div>
+              <div class="field col-12 md:col-6">
+                <label htmlFor="legalDetails">Legal Details</label>
+                <input
+                  pInputTextarea
+                  id="legalDetails"
+                  type="text"
+                  [(ngModel)]="registrationInput.legalDetails"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6">
+          <div class="card p-fluid">
+            <div class="flex flex-wrap gap-2">
+              <button
+                #submitButton
+                pButton
+                pRipple
+                label="Submit"
+                (click)="saveRegistrationDetails(registrationInput)"
+                [disabled]="!isFormValid()"
+                pTooltip="Save Registration"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p-toast key="successMessage"></p-toast>
+    <p-toast key="errorMessage"></p-toast>
+  </div>
+</div>

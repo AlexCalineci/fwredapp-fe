@@ -1,0 +1,17 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+        <img src="assets/layout/images/{{layoutService.config.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">
+      <span>FoodWaste</span><p style="color:red">RED</p>
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+
+      <div class="p-toolbar-group-right">
+        <p-splitButton label="Welcome:{{authenticatedUser}}" icon="pi pi-user" [model]="items"></p-splitButton>
+      </div>
+    </div>
+</div>
