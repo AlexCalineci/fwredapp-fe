@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, distinctUntilChanged, map, Observable, skip, tap} from 'rxjs';
-import {OsmModel} from "./osm.model";
+import {Osm} from "../model/Osm";
 import {OsmService} from "./osm.service";
 export interface GeoLocationState {
-  geolocation: OsmModel[]
+  geolocation: Osm[]
 }
 let _state: GeoLocationState = {
   geolocation: []
@@ -20,7 +20,7 @@ export class OsmFacade {
   constructor(private osmService: OsmService) {
     this.loadGeolocation().pipe().subscribe();
   }
-  setGeolocation(geolocation: OsmModel[]): void {
+  setGeolocation(geolocation: Osm[]): void {
     this.updateState({ geolocation });
   }
 
@@ -31,10 +31,13 @@ export class OsmFacade {
   loadGeolocation(): Observable<void> {
     return this.osmService.getDefaultPosition().pipe(
       tap((position) => {
-        const geoLocationArray: OsmModel[] = [
+        const geoLocationArray: Osm[] = [
           {
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
+            orgId:0,
+            deliveryPointAlias:'',
+            title:''
           }
         ];
         this.setGeolocation(geoLocationArray);

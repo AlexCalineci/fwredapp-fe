@@ -16,6 +16,7 @@ import {SearchAddressComponent} from "./search-address/search-address.component"
 import {AddressComponent} from "./address.component";
 import {RippleModule} from "primeng/ripple";
 import {OsmModule} from "../osm/osm.module";
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   imports: [
@@ -33,12 +34,10 @@ import {OsmModule} from "../osm/osm.module";
     InputTextareaModule,
     InputTextModule,
     RippleModule,
-    OsmModule
+    OsmModule,
+    ToastModule,
   ],
-  exports: [
-    SearchAddressComponent,
-    AddressComponent
-  ],
-  declarations: [AddressComponent,SearchAddressComponent]
+  exports: [SearchAddressComponent, AddressComponent],
+  declarations: [AddressComponent, SearchAddressComponent],
 })
-export class AddressModule { }
+export class AddressModule {}

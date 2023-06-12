@@ -25,7 +25,7 @@ import {AuthGuard} from "../../../services/authguard";
     ToastModule,
     MessageModule,
   ],
-  providers: [UsersFacade,MessageService],
+  providers: [MessageService],
   declarations: [LoginComponent],
 })
 export class LoginModule {}

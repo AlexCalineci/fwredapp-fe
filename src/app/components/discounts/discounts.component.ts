@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Customer, Representative } from 'src/app/demo/api/customer';
-import { Product } from 'src/app/demo/api/product';
 import { Table } from 'primeng/table';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { Discounts } from '../../model/Discounts';
+import { UsersFacade } from '../../services/users.facade';
+import { DiscountsService } from '../../services/discounts.service';
+import { tap } from 'rxjs/operators';
 
 interface expandedRows {
   [key: string]: boolean;
@@ -10,130 +12,57 @@ interface expandedRows {
 
 @Component({
   templateUrl: './discounts.component.html',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService,ConfirmationService]
 })
 export class DiscountsComponent implements OnInit {
+  discountInput: Discounts = <Discounts>{};
+  orgId: number | undefined = 0;
 
-  customers1: Customer[] = [];
+  editingDiscount: Discounts | null = null;
+  clearAndAddVisible = false;
 
-  customers2: Customer[] = [];
-
-  customers3: Customer[] = [];
-
-  selectedCustomers1: Customer[] = [];
-
-  selectedCustomer: Customer = {};
-
-  representatives: Representative[] = [];
-
-  statuses: any[] = [];
-
-  products: Product[] = [];
-
-  rowGroupMetadata: any;
-
-  expandedRows: expandedRows = {};
-
-  activityValues: number[] = [0, 100];
-
-  isExpanded: boolean = false;
-
-  idFrozen: boolean = false;
+  discountList: Discounts[] = [];
+  selectedDiscount: Discounts = <Discounts>{};
 
   loading: boolean = true;
 
   @ViewChild('filter') filter!: ElementRef;
 
-  constructor(private messageService:MessageService,private confirmationService:ConfirmationService) { }
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private userFacade: UsersFacade,
+    private discountService: DiscountsService
+  ) {}
 
-  dropdownItems = [
-    { name: 'Option 1', code: 'Option 1' },
-    { name: 'Option 2', code: 'Option 2' },
-    { name: 'Option 3', code: 'Option 3' }
-  ];
   ngOnInit() {
-
-    this.representatives = [
-      { name: 'Amy Elsner', image: 'amyelsner.png' },
-      { name: 'Anna Fali', image: 'annafali.png' },
-      { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-      { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-      { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-      { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-      { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-      { name: 'Onyama Limba', image: 'onyamalimba.png' },
-      { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-      { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-    ];
-
-    this.statuses = [
-      { label: 'Unqualified', value: 'unqualified' },
-      { label: 'Qualified', value: 'qualified' },
-      { label: 'New', value: 'new' },
-      { label: 'Negotiation', value: 'negotiation' },
-      { label: 'Renewal', value: 'renewal' },
-      { label: 'Proposal', value: 'proposal' }
-    ];
-
-
+    this.userFacade.authenticatedUser$
+      .pipe(
+        tap((user) => {
+          this.orgId = user?.orgId;
+        })
+      )
+      .subscribe();
+    this.loadDiscountList(this.orgId);
   }
 
-  onSort() {
-    this.updateRowGroupMetaData();
+  private formatDate(date: string): string {
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    return formattedDate;
   }
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-
-    if (this.customers3) {
-      for (let i = 0; i < this.customers3.length; i++) {
-        const rowData = this.customers3[i];
-        const representativeName = rowData?.representative?.name || '';
-
-        if (i === 0) {
-          this.rowGroupMetadata[representativeName] = { index: 0, size: 1 };
-        }
-        else {
-          const previousRowData = this.customers3[i - 1];
-          const previousRowGroup = previousRowData?.representative?.name;
-          if (representativeName === previousRowGroup) {
-            this.rowGroupMetadata[representativeName].size++;
-          }
-          else {
-            this.rowGroupMetadata[representativeName] = { index: i, size: 1 };
-          }
-        }
-      }
-    }
+  selectDiscount(discount: Discounts) {
+    this.selectedDiscount = discount;
   }
 
-  confirm2(event: Event) {
-    this.confirmationService.confirm({
-      key: 'confirm2',
-      target: event.target || new EventTarget,
-      message: 'Are you sure that you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
-      },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-      }
-    });
-  }
-
-  expandAll() {
-    if (!this.isExpanded) {
-      this.products.forEach(product => product && product.name ? this.expandedRows[product.name] = true : '');
-
-    } else {
-      this.expandedRows = {};
-    }
-    this.isExpanded = !this.isExpanded;
-  }
-
-  formatCurrency(value: number) {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  editDiscount(discount: Discounts) {
+    this.editingDiscount = { ...discount };
+    this.discountInput = {
+      ...discount,
+      startDate: this.formatDate(discount.startDate),
+      endDate: this.formatDate(discount.endDate),
+    };
+    this.clearAndAddVisible = true;
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -145,4 +74,113 @@ export class DiscountsComponent implements OnInit {
     this.filter.nativeElement.value = '';
   }
 
+  loadDiscountList(orgId: number | undefined): void {
+    this.loading = true;
+    this.discountService.loadDiscounts(this.orgId).subscribe({
+      next: (discount) => {
+        this.discountList = discount;
+        console.log(this.discountList);
+        this.loading = false;
+      },
+    });
+  }
+  submitDiscount(discount: Discounts): void {
+    discount.orgId = this.orgId;
+
+    if (this.editingDiscount) {
+      // Update existing discount
+      this.editingDiscount.discountPercentage = discount.discountPercentage;
+      this.editingDiscount.startDate = discount.startDate;
+      this.editingDiscount.endDate = discount.endDate;
+      this.editingDiscount.orgId = discount.orgId;
+      this.editingDiscount.discountId = discount.discountId;
+
+      this.discountService.editDiscount(this.editingDiscount).subscribe({
+        complete: () => {
+          this.messageService.add({
+            key: 'successMessage',
+            severity: 'success',
+            summary: 'Discount updated',
+            detail: 'Discount entry was updated!',
+          });
+
+          setTimeout(() => 2000);
+          this.loadDiscountList(this.orgId);
+          this.editingDiscount = null;
+          this.clearAndAddVisible = false;
+          this.clearAndAddDiscount();
+        },
+        error: () => {
+          this.messageService.add({
+            key: 'errorMessage',
+            severity: 'error',
+            summary: 'Discount update failed!',
+            detail: 'Discount entry was not updated!',
+          });
+        },
+      });
+
+    } else {
+      this.discountService.addNewdiscount(discount).subscribe({
+        complete: () => {
+          this.messageService.add({
+            key: 'successMessage',
+            severity: 'success',
+            summary: 'Discount Saved',
+            detail: 'Discount entry was saved!',
+          });
+
+          setTimeout(() => 2000);
+          this.loadDiscountList(this.orgId);
+        },
+        error: () => {
+          this.messageService.add({
+            key: 'errorMessage',
+            severity: 'error',
+            summary: 'Discount save failed!',
+            detail: 'Discount entry was not saved!',
+          });
+        },
+      });
+    }
+  }
+
+  confirmDeleteDiscount(discount: Discounts) {
+    console.log("Selected dicount",discount);
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this discount?',
+      accept: () => {
+          this.discountService.deleteDiscounts(discount.discountId).subscribe({
+            complete: () => {
+              this.messageService.add({
+                key: 'successMessage',
+                severity: 'success',
+                summary: 'Discount removed',
+                detail: 'Discount entry was removed!',
+              });
+
+              setTimeout(() => 2000);
+              this.loadDiscountList(this.orgId);
+            },
+            error: () => {
+              this.messageService.add({
+                key: 'errorMessage',
+                severity: 'error',
+                summary: 'Discount remove failed!',
+                detail: 'Discount entry was not removed!',
+              });
+            },
+          });
+      },
+      reject: () => {
+        // Do nothing if deletion is canceled
+      },
+    });
+  }
+
+  clearAndAddDiscount() {
+    this.discountInput = <Discounts>{};
+    this.editingDiscount = null;
+    this.clearAndAddVisible = false;
+  }
 }

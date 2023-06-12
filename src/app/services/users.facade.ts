@@ -91,8 +91,4 @@ export class UsersFacade {
 
   }
 
-  isAuthenticatedUser(): boolean {
-    console.log("Auth",this.localStore.value.isAuthenticated);
-    return this.localStore.value.isAuthenticated;
-  }
 }

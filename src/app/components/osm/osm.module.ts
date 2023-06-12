@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {OsmComponent} from "./osm.component";
 import {OsmRoutingModule} from "./osm-routing.module";
-import {OsmService} from "./osm.service";
-import {OsmFacade} from "./osm.facade";
+import {OsmService} from "../../services/osm.service";
+import {OsmFacade} from "../../services/osm.facade";
 import {DropdownModule} from "primeng/dropdown";
 
 @NgModule({

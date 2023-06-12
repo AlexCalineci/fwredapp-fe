@@ -5,6 +5,17 @@ import { Product } from 'src/app/demo/api/product';
 import { ProductService } from 'src/app/demo/service/product.service';
 import { Table } from 'primeng/table';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { UsersFacade } from '../../services/users.facade';
+import { FoodItems } from '../../model/FoodItems';
+import { Discounts } from '../../model/Discounts';
+import { tap } from 'rxjs/operators';
+import { FoodItemsService } from '../../services/food-items.service';
+import {DeliveryPoint} from "../../model/DeliveryPoints";
+import {DiscountsService} from "../../services/discounts.service";
+import {DeliveryPointsService} from "../../services/delivery-points-service";
+import {Cities} from "../../model/Cities";
+import {Regions} from "../../model/Regions";
+import {Countries} from "../../model/Countries";
 
 interface expandedRows {
   [key: string]: boolean;
@@ -12,130 +23,149 @@ interface expandedRows {
 
 @Component({
   templateUrl: './food-items.component.html',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
 })
 export class FoodItemsComponent implements OnInit {
+  foodItemInput: FoodItems = <FoodItems>{};
+  foodItemList: FoodItems[] = [];
+  loading: boolean = false;
 
-  customers1: Customer[] = [];
+  orgId: number | undefined = 0;
 
-  customers2: Customer[] = [];
+  editingFoodItem: FoodItems | null = null;
+  clearAndAddVisible = false;
 
-  customers3: Customer[] = [];
+  selectedfoodItem: FoodItems = <FoodItems>{};
 
-  selectedCustomers1: Customer[] = [];
-
-  selectedCustomer: Customer = {};
-
-  representatives: Representative[] = [];
-
-  statuses: any[] = [];
-
-  products: Product[] = [];
-
-  rowGroupMetadata: any;
-
-  expandedRows: expandedRows = {};
-
-  activityValues: number[] = [0, 100];
-
-  isExpanded: boolean = false;
-
-  idFrozen: boolean = false;
-
-  loading: boolean = true;
+  discountsOptionList: Discounts[] = [];
+  deliveryPointsList:DeliveryPoint[] = [];
 
   @ViewChild('filter') filter!: ElementRef;
 
-  constructor(private messageService:MessageService,private confirmationService:ConfirmationService) { }
+  userRoles: Array<string> | undefined = [];
 
-  dropdownItems = [
-    { name: 'Option 1', code: 'Option 1' },
-    { name: 'Option 2', code: 'Option 2' },
-    { name: 'Option 3', code: 'Option 3' }
-  ];
-  ngOnInit() {
-
-    this.representatives = [
-      { name: 'Amy Elsner', image: 'amyelsner.png' },
-      { name: 'Anna Fali', image: 'annafali.png' },
-      { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-      { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-      { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-      { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-      { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-      { name: 'Onyama Limba', image: 'onyamalimba.png' },
-      { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-      { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-    ];
-
-    this.statuses = [
-      { label: 'Unqualified', value: 'unqualified' },
-      { label: 'Qualified', value: 'qualified' },
-      { label: 'New', value: 'new' },
-      { label: 'Negotiation', value: 'negotiation' },
-      { label: 'Renewal', value: 'renewal' },
-      { label: 'Proposal', value: 'proposal' }
-    ];
+  quantityTypeOption: string[] = ['KG', 'L', 'PIECE'];
 
 
-  }
+  selectedScopeDiscounts: Discounts | null = null;
+  selectedScopeDeliveryPoints: DeliveryPoint | null = null;
+  selectedQuantityType: string = '';
 
-  onSort() {
-    this.updateRowGroupMetaData();
-  }
+  editingItem: boolean = false;
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private userFacade: UsersFacade,
+    private foodItemService: FoodItemsService,
+    private discountService:DiscountsService,
+    private deliveryPointService:DeliveryPointsService
+  ) {}
 
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-
-    if (this.customers3) {
-      for (let i = 0; i < this.customers3.length; i++) {
-        const rowData = this.customers3[i];
-        const representativeName = rowData?.representative?.name || '';
-
-        if (i === 0) {
-          this.rowGroupMetadata[representativeName] = { index: 0, size: 1 };
-        }
-        else {
-          const previousRowData = this.customers3[i - 1];
-          const previousRowGroup = previousRowData?.representative?.name;
-          if (representativeName === previousRowGroup) {
-            this.rowGroupMetadata[representativeName].size++;
-          }
-          else {
-            this.rowGroupMetadata[representativeName] = { index: i, size: 1 };
-          }
-        }
-      }
-    }
-  }
-
-  confirm2(event: Event) {
-    this.confirmationService.confirm({
-      key: 'confirm2',
-      target: event.target || new EventTarget,
-      message: 'Are you sure that you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+  loadFoodItemList(orgId: number | undefined): void {
+    this.loading = true;
+    this.foodItemService.loadFoodItems(this.orgId).subscribe({
+      next: (foodItems) => {
+        this.foodItemList = foodItems;
+        console.log(this.foodItemList);
+        this.loading = false;
       },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-      }
     });
   }
 
-  expandAll() {
-    if (!this.isExpanded) {
-      this.products.forEach(product => product && product.name ? this.expandedRows[product.name] = true : '');
+  ngOnInit() {
+    this.userFacade.authenticatedUser$
+      .pipe(
+        tap((user) => {
+          this.orgId = user?.orgId;
+          this.userRoles = user?.roles;
+        })
+      )
+      .subscribe();
+     this.foodItemService.loadFoodItems(this.orgId);
 
+     this.discountService.loadDiscounts(this.orgId).subscribe(discounts => {
+          this.discountsOptionList = discounts;
+     });
+
+     this.deliveryPointService.getDeliveryPointByOrgId(this.orgId).subscribe(deliveryPoints => {
+        this.deliveryPointsList = deliveryPoints;
+     });
+  }
+
+  private formatDate(date: string): string {
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    return formattedDate;
+  }
+
+  submitFoodItem(foodItem: FoodItems): void {
+    foodItem.orgId = this.orgId;
+    foodItem.deliveryPointId = this.selectedScopeDeliveryPoints?.deliveryPointId;
+    foodItem.discountId = this.selectedScopeDiscounts?.discountId;
+    foodItem.quantityType = this.selectedQuantityType;
+    if (this.editingFoodItem) {
+      this.editingFoodItem.discountId = foodItem.discountId;
+      this.editingFoodItem.expirationDate = foodItem.expirationDate;
+      this.editingFoodItem.description = foodItem.description;
+      this.editingFoodItem.listPrice = foodItem.listPrice;
+      this.editingFoodItem.description = foodItem.description;
+      this.editingFoodItem.availableQuantity = foodItem.availableQuantity;
+      this.editingFoodItem.quantityType = foodItem.quantityType;
+      this.editingFoodItem.deliveryPointId = foodItem.deliveryPointId;
+
+      this.foodItemService.editFoodItem(this.editingFoodItem).subscribe({
+        complete: () => {
+          this.messageService.add({
+            key: 'successMessage',
+            severity: 'success',
+            summary: 'Food item updated',
+            detail: 'Food item entry was updated!',
+          });
+
+          setTimeout(() => 2000);
+          this.loadFoodItemList(this.orgId);
+          this.editingFoodItem = null;
+          this.clearAndAddVisible = false;
+          this.clearAndAddFoodItem();
+        },
+        error: () => {
+          this.messageService.add({
+            key: 'errorMessage',
+            severity: 'error',
+            summary: 'Food item update failed!',
+            detail: 'Food item entry was not updated!',
+          });
+        },
+      });
     } else {
-      this.expandedRows = {};
+      this.foodItemService.addNewFoodItem(foodItem).subscribe({
+        complete: () => {
+          this.messageService.add({
+            key: 'successMessage',
+            severity: 'success',
+            summary: 'Food item Saved',
+            detail: 'Food item entry was saved!',
+          });
+
+          setTimeout(() => 2000);
+          this.loadFoodItemList(this.orgId);
+        },
+        error: () => {
+          this.messageService.add({
+            key: 'errorMessage',
+            severity: 'error',
+            summary: 'Food item save failed!',
+            detail: 'Food item entry was not saved!',
+          });
+        },
+      });
     }
-    this.isExpanded = !this.isExpanded;
   }
 
   formatCurrency(value: number) {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    return value.toLocaleString('ro-RO', {
+      style: 'currency',
+      currency: 'RON',
+    });
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -147,4 +177,14 @@ export class FoodItemsComponent implements OnInit {
     this.filter.nativeElement.value = '';
   }
 
+  public hasRole(role: string): boolean {
+    // @ts-ignore
+    return this.userRoles.includes(role);
+  }
+
+  clearAndAddFoodItem() {
+    this.foodItemInput = <FoodItems>{};
+    this.editingFoodItem = null;
+    this.clearAndAddVisible = false;
+  }
 }

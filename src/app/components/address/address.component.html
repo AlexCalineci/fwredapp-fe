@@ -4,41 +4,48 @@
       <h5>Delivery point</h5>
       <div class=" p-formgrid grid">
         <div class="field col md:col-3">
-          <label htmlFor="state">Country</label>
-          <p-dropdown [options]="dropdownItems" optionLabel="name" [(ngModel)]="selectedScope"></p-dropdown>
+          <label htmlFor="coutryName">Country</label>
+          <p-dropdown [options]="countries" optionLabel="countryName" [(ngModel)]="selectedScopeCountry" [required]="true" (onChange)="onCountryChange($event)"></p-dropdown>
         </div>
+
         <div class="field col md:col-3">
-          <label htmlFor="city">City</label>
-          <p-dropdown [options]="dropdownItems" optionLabel="name" [(ngModel)]="selectedScope"></p-dropdown>
+          <label htmlFor="regionName">Region</label>
+          <p-dropdown [options]="regions" optionLabel="regionName" [(ngModel)]="selectedScopeRegion" [required]="true" (onChange)="onRegionChange($event)"></p-dropdown>
+        </div>
+
+        <div class="field col md:col-3">
+          <label htmlFor="cityName">City</label>
+          <p-dropdown [options]="cities" optionLabel="cityName" [required]="true" [(ngModel)]="selectedScopeCity"></p-dropdown>
         </div>
       </div>
       <div class="p-formgrid grid">
-        <div class="field col md:col-5">
+        <div class="field col md:col-3">
           <label htmlFor="street">Street</label>
-          <input pInputText id="street" type="text" />
+          <input pInputText id="street" type="text"  [(ngModel)]="addressInput.street"/>
         </div>
+
         <div class="field col md:col-1">
           <label htmlFor="streetNumber">Number</label>
-          <input pInputText id="streetNumber" type="text" />
+          <input pInputText id="streetNumber" type="text"  [(ngModel)]="addressInput.streetNumber"/>
         </div>
         <div class="field col-12 md:col-1">
           <label htmlFor="zip">Zip</label>
-          <input pInputText id="zip" type="text" />
+          <input pInputText id="zip" type="text"   [(ngModel)]="addressInput.zipcode"/>
         </div>
         <div class="field col-12 md:col-2">
-          <label htmlFor="deliveryPointAlias">Delivery Point alis</label>
-          <input [required]="true" pInputText id="deliveryPointAlias" type="text" />
-
+          <label htmlFor="deliveryPointAlias">Delivery Point alias</label>
+          <input [required]="true" pInputText id="deliveryPointAlias" type="text" [(ngModel)]="addressInput.deliveryPointAlias"/>
         </div>
       </div>
       <div class="p-formgrid grid">
         <div class="field col-12 md:col-2">
-          <button pButton pRipple label="Register delivery point" icon="pi pi-plus" class="p-button-success mr-2" ></button>
+          <button pButton pRipple label="Register delivery point" icon="pi pi-plus" class="p-button-success mr-2" (click)="registerDeliveryPoint(addressInput)"></button>
         </div>
       </div>
 
     </div>
-
+    <p-toast key="successMessage"></p-toast>
+    <p-toast key="errorMessage"></p-toast>
   </div>
 
 </div>

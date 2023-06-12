@@ -19,6 +19,9 @@ import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
 import {RippleModule} from "primeng/ripple";
 import {DiscountsRoutingModule} from "./discounts-routing.module";
+import {MessageModule} from "primeng/message";
+import {AuthService} from "../../services/auth.service";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   imports: [
@@ -41,7 +44,10 @@ import {DiscountsRoutingModule} from "./discounts-routing.module";
     DiscountsRoutingModule,
     ToastModule,
     RippleModule,
+    MessageModule,
+    ConfirmDialogModule,
   ],
-  declarations: [DiscountsComponent]
+  providers: [AuthService],
+  declarations: [DiscountsComponent],
 })
-export class DiscountsModule { }
+export class DiscountsModule {}

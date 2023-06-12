@@ -24,16 +24,21 @@ export class AppTopBarComponent implements OnInit {
   authenticatedUser: String|undefined = '';
   constructor(
     public layoutService: LayoutService,
+    public userFacade:UsersFacade
   ) {
 
   }
 
   ngOnInit() {
     this.items = [
-      { label: 'Logout', icon: 'pi pi-external-link', routerLink:['/auth/login'] },
-
+      { label: 'Logout', icon: 'pi pi-external-link', routerLink:['/'],command: () => this.logout() },
     ];
+
+    this.userFacade.authenticatedUser$.subscribe(value => {this.authenticatedUser = value?.username});
   }
 
+  logout(){
+    this.userFacade.setIsAuthenticated(false);
+  }
 
 }

@@ -47,7 +47,7 @@ export class LoginComponent {
           key: 'errorMessage',
           severity: 'error',
           summary: 'Login failed!',
-          detail: 'Authentication is not possible due to invalid credentials',
+          detail: 'Authentication is not possible due to invalid credentials or service error!',
         });
       },
     });

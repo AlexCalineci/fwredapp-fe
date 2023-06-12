@@ -1,47 +1,99 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
+import { UsersFacade } from '../../services/users.facade';
 
 @Component({
-    selector: 'app-menu',
-    templateUrl: './app.menu.component.html'
+  selector: 'app-menu',
+  templateUrl: './app.menu.component.html',
 })
 export class AppMenuComponent implements OnInit {
+  model: any[] = [];
+  userRoles: Array<string> | undefined = [];
+  constructor(
+    public layoutService: LayoutService,
+    private userFacade: UsersFacade
+  ) {}
 
-    model: any[] = [];
+  ngOnInit() {
+    this.userFacade.authenticatedUser$.subscribe(
+      (user) => (this.userRoles = user?.roles)
+    );
 
-    constructor(public layoutService: LayoutService) { }
+    this.model = [
+      {
+        label: 'Home',
+        visible: this.hasRole('RECEIVER') || this.hasRole('DONOR'),
+        items: [
+          {
+            label: 'Dashboard',
+            icon: 'pi pi-fw pi-home',
+            routerLink: ['/dashboard'],
+            visible: this.hasRole('RECEIVER') || this.hasRole('DONOR'),
+          },
+        ],
+      },
+      {
+        label: 'Action Menu',
+        visible: this.hasRole('RECEIVER') || this.hasRole('DONOR'),
+        items: [
+          {
+            label: 'Discounts',
+            icon: 'pi pi-fw pi-exclamation-circle',
+            routerLink: ['/discounts'],
+            visible: this.hasRole('DONOR'),
+          },
+          {
+            label: 'Delivery points',
+            icon: 'pi pi-fw pi-check-square',
+            routerLink: ['/delivery-points'],
+            visible: this.hasRole('DONOR'),
+          },
+          {
+            label: 'Food Items',
+            icon: 'pi pi-fw pi-id-card',
+            routerLink: ['/food-items'],
+            visible: this.hasRole('DONOR') || this.hasRole('RECEIVER'),
+          },
+          {
+            label: 'Donation Map',
+            icon: 'pi pi-fw pi-check-square',
+            routerLink: ['/donation-map'],
+            visible: this.hasRole('RECEIVER'),
+          },
+          {
+            label: 'Reservations',
+            icon: 'pi pi-fw pi-exclamation-circle',
+            routerLink: ['/reservations'],
+            visible: this.hasRole('RECEIVER'),
+          },
+          {
+            label: 'Feedback ratings',
+            icon: 'pi pi-fw pi-id-card',
+            routerLink: ['/feedback-ratings'],
+            visible: this.hasRole('DONOR') || this.hasRole('RECEIVER'),
+          }
+        ],
+      },
 
-    ngOnInit() {
-        this.model = [
-            {
-                label: 'Home',
-                items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] }
-                ]
-            },
-            {
-                label: 'Action Menu',
-                items: [
-                    { label: 'Discounts', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/discounts'] },
-                    { label: 'Delivery points', icon: 'pi pi-fw pi-check-square', routerLink: ['/delivery-points'] },
-                    { label: 'Food Items', icon: 'pi pi-fw pi-id-card', routerLink: ['/food-items'] },
-                    { label: 'Donation Map', icon: 'pi pi-fw pi-check-square', routerLink: ['/donation-map'] },
-                    { label: 'Reservations', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/reservations'] }
-                ]
-            },
+      {
+        label: 'Admin Panel',
+        visible: this.hasRole('ADMIN'),
+        icon: 'pi pi-fw pi-briefcase',
+        items: [
+          {
+            label: 'Authorize Organisations',
+            icon: 'pi pi-fw pi-globe',
+            routerLink: ['/landing'],
+            visible: this.hasRole('ADMIN'),
+          },
+        ],
+      },
+    ];
+  }
 
-            {
-                label: 'Admin Panel',
-                icon: 'pi pi-fw pi-briefcase',
-                items: [
-                    {
-                        label: 'Authorize Organisations',
-                        icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
-                    },
-                ]
-            }
-        ];
-    }
+  private hasRole(role: string): boolean {
+    // @ts-ignore
+    return this.userRoles.includes(role);
+  }
 }

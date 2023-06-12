@@ -19,6 +19,7 @@ import {FoodItemsRoutingModule} from "./food-items-routing.module";
 import {AddressModule} from "../address/address.module";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   imports: [
@@ -40,8 +41,8 @@ import {ToastModule} from "primeng/toast";
     FoodItemsRoutingModule,
     ConfirmPopupModule,
     ToastModule,
-    AddressModule
+    RippleModule,
   ],
-  declarations: [FoodItemsComponent]
+  declarations: [FoodItemsComponent],
 })
-export class FoodItemsModule { }
+export class FoodItemsModule {}

@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RegistrationComponent } from './registration.component';
-import {RegistrationRoutingModule} from './registration-routing.module';
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { CalendarModule } from "primeng/calendar";
 import { ChipsModule } from "primeng/chips";
@@ -13,18 +11,19 @@ import { CascadeSelectModule } from "primeng/cascadeselect";
 import { MultiSelectModule } from "primeng/multiselect";
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { InputTextModule } from "primeng/inputtext";
+import {FeedbackRatingsComponent} from "./feedback-ratings.component";
+import {ProgressBarModule} from "primeng/progressbar";
+import {SliderModule} from "primeng/slider";
+import {TableModule} from "primeng/table";
+import {FeedbackRatingsRoutingModule} from "./feedback-ratings-routing.module";
 import {AddressModule} from "../address/address.module";
-import {RippleModule} from "primeng/ripple";
-import {UsersFacade} from "../../services/users.facade";
-import {MessageService} from "primeng/api";
-import { ToastModule } from 'primeng/toast';
-import {MessageModule} from "primeng/message";
+import {ConfirmPopupModule} from "primeng/confirmpopup";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    RegistrationRoutingModule,
     AutoCompleteModule,
     CalendarModule,
     ChipsModule,
@@ -35,11 +34,13 @@ import {MessageModule} from "primeng/message";
     MultiSelectModule,
     InputTextareaModule,
     InputTextModule,
-    RippleModule,
-    ToastModule,
-    MessageModule
+    ProgressBarModule,
+    SliderModule,
+    TableModule,
+    FeedbackRatingsRoutingModule,
+    ConfirmPopupModule,
+    ToastModule
   ],
-  providers: [UsersFacade, MessageService],
-  declarations: [RegistrationComponent],
+  declarations: [FeedbackRatingsComponent]
 })
-export class RegistrationModule {}
+export class FeedbackRatingsModule { }
