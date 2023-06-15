@@ -7,11 +7,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
-import {UsersFacade} from "../../../services/users.facade";
 import {ToastModule} from "primeng/toast";
 import {MessageService} from "primeng/api";
 import {MessageModule} from "primeng/message";
-import {AuthGuard} from "../../../services/authguard";
+import {JwtInterceptor} from "../../../services/JwtInterceptor";
 
 @NgModule({
   imports: [
@@ -25,7 +24,7 @@ import {AuthGuard} from "../../../services/authguard";
     ToastModule,
     MessageModule,
   ],
-  providers: [MessageService],
+  providers: [MessageService,JwtInterceptor],
   declarations: [LoginComponent],
 })
 export class LoginModule {}

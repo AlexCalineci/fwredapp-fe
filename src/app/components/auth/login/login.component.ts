@@ -37,6 +37,7 @@ export class LoginComponent {
     this.usersFacade.authenticateUser(this.username, this.password).subscribe({
       next: (users: Users) => {
         this.usersFacade.setAuthenticatedUser(users);
+        localStorage.setItem('accessToken', users.token);
         this.usersFacade.setIsAuthenticated(true); // Set isAuthenticated to true
         this.router.navigate(['dashboard']);
       },

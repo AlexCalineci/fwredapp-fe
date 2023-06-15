@@ -65,7 +65,7 @@ export class AppMenuComponent implements OnInit {
             label: 'Reservations',
             icon: 'pi pi-fw pi-exclamation-circle',
             routerLink: ['/reservations'],
-            visible: this.hasRole('RECEIVER'),
+            visible: this.hasRole('RECEIVER')|| this.hasRole('DONOR'),
           },
           {
             label: 'Feedback ratings',

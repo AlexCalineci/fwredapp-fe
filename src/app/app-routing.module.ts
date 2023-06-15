@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppLayoutComponent } from "./components/layout/app.layout.component";
 import {LandingComponent} from "./components/landing/landing.component";
 import {AuthGuard} from "./services/authguard";
-import {NotfoundComponent} from "./notfound/notfound.component";
+import {NotfoundComponent} from "./components/notfound/notfound.component";
 
 @NgModule({
   imports: [

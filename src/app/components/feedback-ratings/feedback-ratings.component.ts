@@ -1,141 +1,117 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Customer, Representative } from 'src/app/demo/api/customer';
-import { CustomerService } from 'src/app/demo/service/customer.service';
-import { Product } from 'src/app/demo/api/product';
-import { ProductService } from 'src/app/demo/service/product.service';
 import { Table } from 'primeng/table';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { FeedbackRating } from '../../model/FeedbackRating';
+import { Reservations } from '../../model/Reservations';
+import { Organizations } from '../../model/Organization';
+import { ReservationsService } from '../../services/reservations.service';
+import { OrganizationsService } from '../../services/organizations.service';
+import { tap } from 'rxjs/operators';
+import { UsersFacade } from '../../services/users.facade';
+import {FeedbackRatingsService} from "../../services/feedback-ratings.service";
 
-interface expandedRows {
-  [key: string]: boolean;
-}
+
 
 @Component({
   templateUrl: './feedback-ratings.component.html',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
+
 })
 export class FeedbackRatingsComponent implements OnInit {
-
-  customers1: Customer[] = [];
-
-  customers2: Customer[] = [];
-
-  customers3: Customer[] = [];
-
-  selectedCustomers1: Customer[] = [];
-
-  selectedCustomer: Customer = {};
-
-  representatives: Representative[] = [];
-
-  statuses: any[] = [];
-
-  products: Product[] = [];
-
-  rowGroupMetadata: any;
-
-  expandedRows: expandedRows = {};
-
-  activityValues: number[] = [0, 100];
-
-  isExpanded: boolean = false;
-
-  idFrozen: boolean = false;
-
-  loading: boolean = true;
+  loading: boolean = false;
 
   @ViewChild('filter') filter!: ElementRef;
 
-  constructor(private messageService:MessageService,private confirmationService:ConfirmationService) { }
+  feedbackInput: FeedbackRating = <FeedbackRating>{};
+  feedbackList: FeedbackRating[] = [];
+  reservationsList: Reservations[] = [];
+  organizationList: Organizations[] = [];
 
-  dropdownItems = [
-    { name: 'Option 1', code: 'Option 1' },
-    { name: 'Option 2', code: 'Option 2' },
-    { name: 'Option 3', code: 'Option 3' }
-  ];
+  orgId: number | undefined = 0;
+  userRoles: Array<string> | undefined = [];
+  currentRole: string | undefined = '';
+  selectedOrganization: Organizations | null = null;
+  selectedReservation: Reservations | null = null;
+
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private reservationService: ReservationsService,
+    private organizationService: OrganizationsService,
+    private userFacade: UsersFacade,
+    private feedbackService:FeedbackRatingsService
+  ) {}
+
   ngOnInit() {
-
-    this.representatives = [
-      { name: 'Amy Elsner', image: 'amyelsner.png' },
-      { name: 'Anna Fali', image: 'annafali.png' },
-      { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-      { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-      { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-      { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-      { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-      { name: 'Onyama Limba', image: 'onyamalimba.png' },
-      { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-      { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-    ];
-
-    this.statuses = [
-      { label: 'Unqualified', value: 'unqualified' },
-      { label: 'Qualified', value: 'qualified' },
-      { label: 'New', value: 'new' },
-      { label: 'Negotiation', value: 'negotiation' },
-      { label: 'Renewal', value: 'renewal' },
-      { label: 'Proposal', value: 'proposal' }
-    ];
-
-
-  }
-
-  onSort() {
-    this.updateRowGroupMetaData();
-  }
-
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-
-    if (this.customers3) {
-      for (let i = 0; i < this.customers3.length; i++) {
-        const rowData = this.customers3[i];
-        const representativeName = rowData?.representative?.name || '';
-
-        if (i === 0) {
-          this.rowGroupMetadata[representativeName] = { index: 0, size: 1 };
-        }
-        else {
-          const previousRowData = this.customers3[i - 1];
-          const previousRowGroup = previousRowData?.representative?.name;
-          if (representativeName === previousRowGroup) {
-            this.rowGroupMetadata[representativeName].size++;
-          }
-          else {
-            this.rowGroupMetadata[representativeName] = { index: i, size: 1 };
-          }
-        }
-      }
-    }
-  }
-
-  confirm2(event: Event) {
-    this.confirmationService.confirm({
-      key: 'confirm2',
-      target: event.target || new EventTarget,
-      message: 'Are you sure that you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
-      },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-      }
+    this.userFacade.authenticatedUser$
+      .pipe(
+        tap((user) => {
+          this.orgId = user?.orgId;
+          this.userRoles = user?.roles;
+          this.currentRole = user?.roles[0];
+        })
+      )
+      .subscribe();
+    this.organizationService.geOrganizations(this.currentRole == 'RECEIVER'?'DONOR':'RECEIVER').subscribe((organizations) => {
+      this.selectedOrganization = organizations[0];
+      this.reservationService
+        .loadReservationsForFeedback(this.selectedOrganization.orgId, this.orgId)
+        .subscribe((reservations) => {
+          this.reservationsList = reservations;
+          this.reservationsList = this.reservationsList.map(reservation => ({
+            ...reservation,
+            displayLabel: `Reservation ID: ${reservation.reservationId}, Food Item: ${reservation.foodItemName}, Quantity: ${reservation.quantity}`
+          }));
+        });
+      this.organizationList = organizations;
     });
+    this.feedbackService.loadFeedback(this.orgId,this.currentRole).subscribe(feedbackList =>this.feedbackList = feedbackList);
   }
 
-  expandAll() {
-    if (!this.isExpanded) {
-      this.products.forEach(product => product && product.name ? this.expandedRows[product.name] = true : '');
-
+  onOrganizationChange(event: any) {
+    console.log(event);
+    this.selectedOrganization = event.value;
+    if (this.selectedOrganization) {
+      this.reservationService
+        .loadReservationsForFeedback(this.orgId,this.selectedOrganization.orgId)
+        .subscribe((reservations) => {
+          this.reservationsList = reservations;
+          this.reservationsList = this.reservationsList.map(reservation => ({
+            ...reservation,
+            displayLabel: `Reservation ID: ${reservation.reservationId}, Food Item: ${reservation.foodItemName}, Quantity: ${reservation.quantity}`
+          }));
+        });
     } else {
-      this.expandedRows = {};
+      this.reservationsList = [];
     }
-    this.isExpanded = !this.isExpanded;
   }
 
-  formatCurrency(value: number) {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  submitFeedback(feedback: FeedbackRating): void {
+    feedback.raterOrgId = this.orgId;
+    feedback.ratedOrgId = this.selectedOrganization?.orgId;
+    feedback.reservationId = this.selectedReservation?.reservationId;
+    console.log("Rate",feedback.starRating);
+    this.feedbackService.addFeedback(feedback).subscribe({
+      complete: () => {
+        this.messageService.add({
+          key: 'successMessage',
+          severity: 'success',
+          summary: 'Feedback Saved',
+          detail: 'Feedback rate was saved!',
+        });
+
+        setTimeout(() => 2000);
+        this.feedbackService.loadFeedback(this.orgId,this.currentRole).subscribe();
+      },
+      error: () => {
+        this.messageService.add({
+          key: 'errorMessage',
+          severity: 'error',
+          summary: 'Feedback rate failed!',
+          detail: 'Feedback was not saved!!',
+        });
+      },
+    });
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -147,4 +123,15 @@ export class FeedbackRatingsComponent implements OnInit {
     this.filter.nativeElement.value = '';
   }
 
+  canRate(selectedReservation:Reservations|null):boolean{
+    if (selectedReservation){
+      return true;
+    }else
+      return false;
+  }
+
+  public hasRole(role: string): boolean {
+    // @ts-ignore
+    return this.userRoles.includes(role);
+  }
 }

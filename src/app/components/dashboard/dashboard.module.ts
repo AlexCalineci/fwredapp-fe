@@ -9,7 +9,6 @@ import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { DashboardsRoutingModule } from './dashboard-routing.module';
-import {ProductService} from "../../demo/service/product.service";
 
 @NgModule({
     imports: [
@@ -23,7 +22,6 @@ import {ProductService} from "../../demo/service/product.service";
         ButtonModule,
         DashboardsRoutingModule
     ],
-    providers:[ProductService],
     declarations: [DashboardComponent]
 })
 export class DashboardModule { }

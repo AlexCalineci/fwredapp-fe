@@ -1,17 +1,19 @@
-import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
-import {Injectable} from "@angular/core";
-import {catchError, Observable, throwError} from "rxjs";
-import {environment} from "../../environments/environment";
-import {AuthService} from "./auth.service";
-import {FoodItems} from "../model/FoodItems";
-
-
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
+import { FoodItems } from '../model/FoodItems';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FoodItemsService {
-  constructor(private http: HttpClient,private authService:AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   private getHttpOptions(): { headers: HttpHeaders } {
     const authToken = this.authService.getAuthToken();
@@ -38,16 +40,15 @@ export class FoodItemsService {
 
   addNewFoodItem(foodItem: FoodItems): Observable<FoodItems> {
     let JsonInput = {
-      discountId:foodItem.discountId,
-      quantityType:foodItem.quantityType,
-      name:foodItem.name,
-      availableQuantity:foodItem.availableQuantity,
-      deliveryPointId:foodItem.deliveryPointId,
-      expirationDate:foodItem.expirationDate,
-      orgId:foodItem.orgId,
-      listPrice:foodItem.listPrice,
-      description:foodItem.description
-
+      discountId: foodItem.discountId,
+      quantityType: foodItem.quantityType,
+      name: foodItem.name,
+      availableQuantity: foodItem.availableQuantity,
+      deliveryPointId: foodItem.deliveryPointId,
+      expirationDate: foodItem.expirationDate,
+      orgId: foodItem.orgId,
+      listPrice: foodItem.listPrice,
+      description: foodItem.description,
     };
     const body = JSON.stringify(JsonInput);
     return this.http
@@ -61,14 +62,14 @@ export class FoodItemsService {
 
   editFoodItem(foodItem: FoodItems): Observable<FoodItems> {
     let JsonInput = {
-      discountId:foodItem.discountId,
-      quantityType:foodItem.quantityType,
-      name:foodItem.name,
-      availableQuantity:foodItem.availableQuantity,
-      deliveryPointId:foodItem.deliveryPointId,
-      expirationDate:foodItem.expirationDate,
-      listPrice:foodItem.listPrice,
-      description:foodItem.description
+      discountId: foodItem.discountId,
+      quantityType: foodItem.quantityType,
+      name: foodItem.name,
+      availableQuantity: foodItem.availableQuantity,
+      deliveryPointId: foodItem.deliveryPointId,
+      expirationDate: foodItem.expirationDate,
+      listPrice: foodItem.listPrice,
+      description: foodItem.description,
     };
     const body = JSON.stringify(JsonInput);
     return this.http
@@ -80,9 +81,13 @@ export class FoodItemsService {
       .pipe(catchError(this.handleError));
   }
 
-  loadFoodItems(orgId: number | undefined): Observable<FoodItems[]> {
+  loadFoodItems(
+    orgId: number | undefined,
+    userType: string | undefined
+  ): Observable<FoodItems[]> {
     let JsonInput = {
       orgId: orgId,
+      userType:userType
     };
     const body = JSON.stringify(JsonInput);
     return this.http
@@ -94,7 +99,7 @@ export class FoodItemsService {
       .pipe(catchError(this.handleError));
   }
 
-  deleteFoodItems(foodItemId:number|null): Observable<FoodItems[]> {
+  deleteFoodItems(foodItemId: number | null): Observable<FoodItems[]> {
     let JsonInput = {
       foodItemId: foodItemId,
     };

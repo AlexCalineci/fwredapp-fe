@@ -8,13 +8,15 @@ import { Users } from '../model/Users';
 export interface UserState {
   userType: UserType[];
   authenticatedUser: Users | null;
-  isAuthenticated:boolean
+  isAuthenticated:boolean,
+  token:string
 }
 
 const initialState: UserState = {
   userType: [],
   authenticatedUser: null,
-  isAuthenticated:false
+  isAuthenticated:false,
+  token:''
 };
 
 @Injectable()
@@ -37,6 +39,10 @@ export class UsersFacade {
     distinctUntilChanged()
   );
 
+  token$ = this.localState$.pipe(
+    map((state) => state.token),
+    distinctUntilChanged()
+  );
 
   constructor(private userService: UsersService) {
     this.getUserType().subscribe();
@@ -47,12 +53,18 @@ export class UsersFacade {
     this.localStore.next(state);
   }
 
+  setToken(token: string): void {
+    const state = { ...this.localStore.value, token };
+    this.localStore.next(state);
+  }
+
   setAuthenticatedUser(authenticatedUser: Users): void {
     const state = {
       ...this.localStore.value,
       authenticatedUser,
-      isAuthenticated: true // Update isAuthenticated to true when user is authenticated
+      isAuthenticated: true
     };
+
     this.localStore.next(state);
   }
 
@@ -86,6 +98,7 @@ export class UsersFacade {
     return this.userService.authenticateUser(user, password).pipe(
       tap((users: Users) => {
         this.setAuthenticatedUser(users);
+        this.setToken(users.token);
       })
     );
 

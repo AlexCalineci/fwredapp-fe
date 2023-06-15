@@ -10,6 +10,10 @@ export class AuthService {
 
   constructor(private userFacade: UsersFacade) {}
 
+  public setToken(token: string|undefined): void {
+    this.authToken = token;
+  }
+
   getAuthToken(): string | undefined {
     this.userFacade.authenticatedUser$
       .pipe(
@@ -18,7 +22,7 @@ export class AuthService {
           this.authToken = user?.token;
         })
       )
-      .subscribe();
+      .subscribe(user => this.setToken(user?.token));
     return this.authToken;
   }
 }

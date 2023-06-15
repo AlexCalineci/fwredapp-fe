@@ -1,139 +1,52 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Customer, Representative } from 'src/app/demo/api/customer';
-import { Product } from 'src/app/demo/api/product';
 import { Table } from 'primeng/table';
 import { MessageService, ConfirmationService } from 'primeng/api';
-
-interface expandedRows {
-  [key: string]: boolean;
-}
+import { ReservationsService } from '../../services/reservations.service';
+import { Reservations } from '../../model/Reservations';
+import { tap } from 'rxjs/operators';
+import { UsersFacade } from '../../services/users.facade';
+import { Router } from '@angular/router';
+import { ReservationsRoutingModule } from './reservations-routing.module';
 
 @Component({
   templateUrl: './reservations.component.html',
-  providers: [MessageService, ConfirmationService]
+  providers: [MessageService, ConfirmationService],
+  styleUrls: ['reservations.component.scss'],
 })
 export class ReservationsComponent implements OnInit {
-
-  customers1: Customer[] = [];
-
-  customers2: Customer[] = [];
-
-  customers3: Customer[] = [];
-
-  selectedCustomers1: Customer[] = [];
-
-  selectedCustomer: Customer = {};
-
-  representatives: Representative[] = [];
-
-  statuses: any[] = [];
-
-  products: Product[] = [];
-
-  rowGroupMetadata: any;
-
-  expandedRows: expandedRows = {};
-
-  activityValues: number[] = [0, 100];
-
-  isExpanded: boolean = false;
-
-  idFrozen: boolean = false;
-
+  reservation: Reservations = <Reservations>{};
+  reservationList: Reservations[] = [];
   loading: boolean = true;
-
+  orgId: number | undefined = 0;
+  userRoles: Array<string> | undefined = [];
+  foodItemReservation: any = {};
+  showReservationModal: boolean = false;
+  currentRole: string | undefined = '';
   @ViewChild('filter') filter!: ElementRef;
 
-  constructor(private messageService:MessageService,private confirmationService:ConfirmationService) { }
+  editingReservation: ReservationsRoutingModule | null = null;
+  clearAndAddVisible = false;
+  editingItem: boolean = false;
 
-  dropdownItems = [
-    { name: 'Option 1', code: 'Option 1' },
-    { name: 'Option 2', code: 'Option 2' },
-    { name: 'Option 3', code: 'Option 3' }
-  ];
+  constructor(
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private reservationService: ReservationsService,
+    private userFacade: UsersFacade,
+    private router: Router
+  ) {}
+
   ngOnInit() {
-
-    this.representatives = [
-      { name: 'Amy Elsner', image: 'amyelsner.png' },
-      { name: 'Anna Fali', image: 'annafali.png' },
-      { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-      { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-      { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-      { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-      { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-      { name: 'Onyama Limba', image: 'onyamalimba.png' },
-      { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-      { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-    ];
-
-    this.statuses = [
-      { label: 'Unqualified', value: 'unqualified' },
-      { label: 'Qualified', value: 'qualified' },
-      { label: 'New', value: 'new' },
-      { label: 'Negotiation', value: 'negotiation' },
-      { label: 'Renewal', value: 'renewal' },
-      { label: 'Proposal', value: 'proposal' }
-    ];
-
-
-  }
-
-  onSort() {
-    this.updateRowGroupMetaData();
-  }
-
-  updateRowGroupMetaData() {
-    this.rowGroupMetadata = {};
-
-    if (this.customers3) {
-      for (let i = 0; i < this.customers3.length; i++) {
-        const rowData = this.customers3[i];
-        const representativeName = rowData?.representative?.name || '';
-
-        if (i === 0) {
-          this.rowGroupMetadata[representativeName] = { index: 0, size: 1 };
-        }
-        else {
-          const previousRowData = this.customers3[i - 1];
-          const previousRowGroup = previousRowData?.representative?.name;
-          if (representativeName === previousRowGroup) {
-            this.rowGroupMetadata[representativeName].size++;
-          }
-          else {
-            this.rowGroupMetadata[representativeName] = { index: i, size: 1 };
-          }
-        }
-      }
-    }
-  }
-
-  confirm2(event: Event) {
-    this.confirmationService.confirm({
-      key: 'confirm2',
-      target: event.target || new EventTarget,
-      message: 'Are you sure that you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
-      },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
-      }
-    });
-  }
-
-  expandAll() {
-    if (!this.isExpanded) {
-      this.products.forEach(product => product && product.name ? this.expandedRows[product.name] = true : '');
-
-    } else {
-      this.expandedRows = {};
-    }
-    this.isExpanded = !this.isExpanded;
-  }
-
-  formatCurrency(value: number) {
-    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    this.userFacade.authenticatedUser$
+      .pipe(
+        tap((user) => {
+          this.orgId = user?.orgId;
+          this.userRoles = user?.roles;
+          this.currentRole = user?.roles[0];
+        })
+      )
+      .subscribe();
+    this.loadReservationItemList(this.orgId, this.currentRole);
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -145,4 +58,98 @@ export class ReservationsComponent implements OnInit {
     this.filter.nativeElement.value = '';
   }
 
+  loadReservationItemList(
+    orgId: number | undefined,
+    userType: string | undefined
+  ): void {
+    this.loading = true;
+    this.reservationService.loadReservations(orgId, userType).subscribe({
+      next: (reservation) => {
+        this.reservationList = reservation;
+        console.log(this.reservationList);
+        this.loading = false;
+      },
+    });
+  }
+
+  modifyReservation(foodItemReservation: any) {
+    this.reservationService.addReservation(foodItemReservation).subscribe({
+      complete: () => {
+        this.showReservationModal = false;
+        this.loadReservationItemList(this.orgId, this.currentRole);
+      },
+      error: () => {
+        this.messageService.add({
+          key: 'errorMessage',
+          severity: 'error',
+          summary: 'Modification failed!',
+          detail: 'Reservation modification failed!',
+        });
+      },
+    });
+  }
+
+  openReservationModal(reservation: Reservations) {
+    console.log('Reservation', reservation);
+    this.foodItemReservation = {
+      name: reservation.foodItemName,
+      foodItemId: reservation.foodItemId,
+      quantity: null,
+      currentAvailableQuantity: reservation.availableQuantity, // Update the property name here
+    };
+    console.log('Food items reservations', this.foodItemReservation);
+    this.showReservationModal = true;
+  }
+
+  cancelModification() {
+    this.foodItemReservation = {};
+    this.showReservationModal = false;
+  }
+
+  public hasRole(role: string): boolean {
+    // @ts-ignore
+    return this.userRoles.includes(role);
+  }
+
+  editReservation(reservation: Reservations) {
+    this.editingReservation = { ...reservation };
+    this.reservation = {
+      ...reservation,
+    };
+    this.clearAndAddVisible = true;
+    this.editingItem = true;
+    this.openReservationModal(this.reservation);
+  }
+
+  confirmCancelReservation(reservation: Reservations) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to cancel this reservation?',
+      accept: () => {
+        this.reservationService
+          .deleteFoodItems(reservation.reservationId)
+          .subscribe({
+            complete: () => {
+              this.messageService.add({
+                key: 'successMessage',
+                severity: 'success',
+                summary: 'Reservation cancelled',
+                detail: 'Reservation was set to CANCELLED!',
+              });
+
+              setTimeout(() => 2000);
+              this.loadReservationItemList(this.orgId, this.currentRole);
+            },
+            error: () => {
+              this.messageService.add({
+                key: 'errorMessage',
+                severity: 'error',
+                summary: 'Reservation cancel failed!',
+                detail: 'Reservation was not cancelled!',
+              });
+            },
+          });
+      },
+      reject: () => {},
+    });
+  }
 }

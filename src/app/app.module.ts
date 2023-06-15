@@ -3,16 +3,14 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './components/layout/app.layout.module';
-import { EventService } from './demo/service/event.service';
-import { IconService } from './demo/service/icon.service';
-import { NodeService } from './demo/service/node.service';
-import { PhotoService } from './demo/service/photo.service';
+import { IconService } from './services/icon.service';
 import {LandingModule} from "./components/landing/landing.module";
 import {AuthModule} from "./components/auth/auth.module";
 import {AddressModule} from "./components/address/address.module";
 import {AuthGuard} from "./services/authguard";
 import {UsersFacade} from "./services/users.facade";
-import {NotfoundComponent} from "./notfound/notfound.component";
+import {NotfoundComponent} from "./components/notfound/notfound.component";
+import {JwtInterceptor} from "./services/JwtInterceptor";
 
 
 @NgModule({
@@ -28,8 +26,7 @@ import {NotfoundComponent} from "./notfound/notfound.component";
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-          EventService, IconService, NodeService,
-          PhotoService,AuthGuard,UsersFacade
+           IconService,AuthGuard,UsersFacade,JwtInterceptor
     ],
     bootstrap: [AppComponent]
 })

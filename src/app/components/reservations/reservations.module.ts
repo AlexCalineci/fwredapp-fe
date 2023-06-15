@@ -19,6 +19,8 @@ import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
 import {RippleModule} from "primeng/ripple";
 import {ReservationsRoutingModule} from "./reservations-routing.module";
+import { DialogModule } from 'primeng/dialog';
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
   imports: [
@@ -40,8 +42,10 @@ import {ReservationsRoutingModule} from "./reservations-routing.module";
     ConfirmPopupModule,
     ToastModule,
     RippleModule,
-    ReservationsRoutingModule
+    ReservationsRoutingModule,
+    DialogModule,
+    ConfirmDialogModule,
   ],
-  declarations: [ReservationsComponent]
+  declarations: [ReservationsComponent],
 })
-export class ReservationsModule { }
+export class ReservationsModule {}

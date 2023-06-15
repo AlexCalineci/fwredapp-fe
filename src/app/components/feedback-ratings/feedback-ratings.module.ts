@@ -16,9 +16,11 @@ import {ProgressBarModule} from "primeng/progressbar";
 import {SliderModule} from "primeng/slider";
 import {TableModule} from "primeng/table";
 import {FeedbackRatingsRoutingModule} from "./feedback-ratings-routing.module";
-import {AddressModule} from "../address/address.module";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import {RippleModule} from "primeng/ripple";
+import {RatingModule} from "primeng/rating";
 
 @NgModule({
   imports: [
@@ -39,8 +41,11 @@ import {ToastModule} from "primeng/toast";
     TableModule,
     FeedbackRatingsRoutingModule,
     ConfirmPopupModule,
-    ToastModule
+    ToastModule,
+    ConfirmDialogModule,
+    RippleModule,
+    RatingModule,
   ],
-  declarations: [FeedbackRatingsComponent]
+  declarations: [FeedbackRatingsComponent],
 })
-export class FeedbackRatingsModule { }
+export class FeedbackRatingsModule {}

@@ -4,7 +4,7 @@
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Food Reservations</span>
-                        <div class="text-900 font-medium text-xl">152</div>
+                        <div class="text-900 font-medium text-xl">{{dashboardStats.totalFoodReservations}}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-blue-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
@@ -17,7 +17,7 @@
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Total registered food items</span>
-                        <div class="text-900 font-medium text-xl">$2.100</div>
+                        <div class="text-900 font-medium text-xl">{{dashboardStats.totalRegisteredFoodItems}}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-orange-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-map-marker text-orange-500 text-xl"></i>
@@ -30,7 +30,7 @@
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Registered Donors</span>
-                        <div class="text-900 font-medium text-xl">28441</div>
+                        <div class="text-900 font-medium text-xl">{{dashboardStats.totalRegisteredDonors}}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-inbox text-cyan-500 text-xl"></i>
@@ -43,7 +43,7 @@
                 <div class="flex justify-content-between mb-3">
                     <div>
                         <span class="block text-500 font-medium mb-3">Registered Receivers</span>
-                        <div class="text-900 font-medium text-xl">152 Unread</div>
+                        <div class="text-900 font-medium text-xl">{{dashboardStats.totalRegisteredReceivers}}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-purple-100 border-round" [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
                         <i class="pi pi-comment text-purple-500 text-xl"></i>
@@ -61,80 +61,21 @@
                         <p-menu #menu [popup]="true" [model]="items"></p-menu>
                     </div>
                 </div>
-                <ul class="list-none p-0 m-0">
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Space T-Shirt</span>
-                            <div class="mt-1 text-600">Clothing</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-orange-500 h-full" [ngStyle]="{width: '50%'}"></div>
-                            </div>
-                            <span class="text-orange-500 ml-3 font-medium">%50</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Portal Sticker</span>
-                            <div class="mt-1 text-600">Accessories</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-cyan-500 h-full" [ngStyle]="{width: '16%'}"></div>
-                            </div>
-                            <span class="text-cyan-500 ml-3 font-medium">%16</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Supernova Sticker</span>
-                            <div class="mt-1 text-600">Accessories</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-pink-500 h-full" [ngStyle]="{width: '67%'}"></div>
-                            </div>
-                            <span class="text-pink-500 ml-3 font-medium">%67</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Wonders Notebook</span>
-                            <div class="mt-1 text-600">Office</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-green-500 h-full" [ngStyle]="{width: '35%'}"></div>
-                            </div>
-                            <span class="text-green-500 ml-3 font-medium">%35</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Mat Black Case</span>
-                            <div class="mt-1 text-600">Accessories</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-purple-500 h-full" [ngStyle]="{width: '75%'}"></div>
-                            </div>
-                            <span class="text-purple-500 ml-3 font-medium">%75</span>
-                        </div>
-                    </li>
-                    <li class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                            <span class="text-900 font-medium mr-2 mb-1 md:mb-0">Robots T-Shirt</span>
-                            <div class="mt-1 text-600">Clothing</div>
-                        </div>
-                        <div class="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                            <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
-                                <div class="bg-teal-500 h-full" [ngStyle]="{width: '40%'}"></div>
-                            </div>
-                            <span class="text-teal-500 ml-3 font-medium">%40</span>
-                        </div>
-                    </li>
-                </ul>
+              <ul class="list-none p-0 m-0">
+                <li *ngFor="let foodItem of foodItemsStats" class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                  <div>
+                    <span class="text-900 font-medium mr-2 mb-1 md:mb-0">{{foodItem.name}}</span>
+                    <div class="mt-1 text-600">{{foodItem.organizationName}}</div>
+                  </div>
+                  <div class="mt-2 md:mt-0 flex align-items-center">
+                    <div class="surface-300 border-round overflow-hidden w-10rem lg:w-6rem" [ngStyle]="{height: '8px'}">
+                      <div class="bg-orange-500 h-full" [ngStyle]="{width: foodItem.discountPercentage + '%'}"></div>
+                    </div>
+                    <span class="text-orange-500 ml-3 font-medium">{{foodItem.discountPercentage}}%</span>
+                  </div>
+                </li>
+              </ul>
+
             </div>
         </div>
 

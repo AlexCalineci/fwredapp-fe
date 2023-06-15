@@ -1,8 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Customer, Representative } from 'src/app/demo/api/customer';
-import { CustomerService } from 'src/app/demo/service/customer.service';
-import { Product } from 'src/app/demo/api/product';
-import { ProductService } from 'src/app/demo/service/product.service';
 import { Table } from 'primeng/table';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { UsersFacade } from '../../services/users.facade';
@@ -13,9 +9,8 @@ import { FoodItemsService } from '../../services/food-items.service';
 import {DeliveryPoint} from "../../model/DeliveryPoints";
 import {DiscountsService} from "../../services/discounts.service";
 import {DeliveryPointsService} from "../../services/delivery-points-service";
-import {Cities} from "../../model/Cities";
-import {Regions} from "../../model/Regions";
-import {Countries} from "../../model/Countries";
+import {Router} from "@angular/router";
+import {ReservationsService} from "../../services/reservations.service";
 
 interface expandedRows {
   [key: string]: boolean;
@@ -24,16 +19,20 @@ interface expandedRows {
 @Component({
   templateUrl: './food-items.component.html',
   providers: [MessageService, ConfirmationService],
+  styleUrls:['./food-items.component.scss']
 })
 export class FoodItemsComponent implements OnInit {
   foodItemInput: FoodItems = <FoodItems>{};
   foodItemList: FoodItems[] = [];
   loading: boolean = false;
+  foodItemReservation: any = {};
+  showReservationModal: boolean = false;
 
   orgId: number | undefined = 0;
 
   editingFoodItem: FoodItems | null = null;
   clearAndAddVisible = false;
+  editingItem: boolean = false;
 
   selectedfoodItem: FoodItems = <FoodItems>{};
 
@@ -50,20 +49,23 @@ export class FoodItemsComponent implements OnInit {
   selectedScopeDiscounts: Discounts | null = null;
   selectedScopeDeliveryPoints: DeliveryPoint | null = null;
   selectedQuantityType: string = '';
+  private currentRole: string | undefined;
 
-  editingItem: boolean = false;
+
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private userFacade: UsersFacade,
     private foodItemService: FoodItemsService,
     private discountService:DiscountsService,
-    private deliveryPointService:DeliveryPointsService
+    private deliveryPointService:DeliveryPointsService,
+    private router:Router,
+    private reservationService:ReservationsService
   ) {}
 
-  loadFoodItemList(orgId: number | undefined): void {
+  loadFoodItemList(orgId: number | undefined,userType:string|undefined): void {
     this.loading = true;
-    this.foodItemService.loadFoodItems(this.orgId).subscribe({
+    this.foodItemService.loadFoodItems(orgId,userType).subscribe({
       next: (foodItems) => {
         this.foodItemList = foodItems;
         console.log(this.foodItemList);
@@ -78,10 +80,11 @@ export class FoodItemsComponent implements OnInit {
         tap((user) => {
           this.orgId = user?.orgId;
           this.userRoles = user?.roles;
+          this.currentRole = user?.roles[0];
         })
       )
       .subscribe();
-     this.foodItemService.loadFoodItems(this.orgId);
+     this.loadFoodItemList(this.orgId,this.currentRole);
 
      this.discountService.loadDiscounts(this.orgId).subscribe(discounts => {
           this.discountsOptionList = discounts;
@@ -96,6 +99,16 @@ export class FoodItemsComponent implements OnInit {
     const formattedDate = new Date(date).toISOString().split('T')[0];
     return formattedDate;
   }
+
+  editFoodItem(foodItem: FoodItems) {
+    this.editingFoodItem = { ...foodItem };
+    this.foodItemInput = {
+      ...foodItem
+    };
+    this.clearAndAddVisible = true;
+    this.editingItem = true;
+  }
+
 
   submitFoodItem(foodItem: FoodItems): void {
     foodItem.orgId = this.orgId;
@@ -122,7 +135,7 @@ export class FoodItemsComponent implements OnInit {
           });
 
           setTimeout(() => 2000);
-          this.loadFoodItemList(this.orgId);
+          this.loadFoodItemList(this.orgId,this.currentRole);
           this.editingFoodItem = null;
           this.clearAndAddVisible = false;
           this.clearAndAddFoodItem();
@@ -147,7 +160,7 @@ export class FoodItemsComponent implements OnInit {
           });
 
           setTimeout(() => 2000);
-          this.loadFoodItemList(this.orgId);
+          this.loadFoodItemList(this.orgId,this.currentRole);
         },
         error: () => {
           this.messageService.add({
@@ -182,9 +195,82 @@ export class FoodItemsComponent implements OnInit {
     return this.userRoles.includes(role);
   }
 
+  confirmDeleteFoodItem(foodItem: FoodItems) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this discount?',
+      accept: () => {
+        this.foodItemService.deleteFoodItems(foodItem.foodItemId).subscribe({
+          complete: () => {
+            this.messageService.add({
+              key: 'successMessage',
+              severity: 'success',
+              summary: 'Food item removed',
+              detail: 'Food item entry was removed!',
+            });
+
+            setTimeout(() => 2000);
+            this.loadFoodItemList(this.orgId,this.currentRole);
+          },
+          error: () => {
+            this.messageService.add({
+              key: 'errorMessage',
+              severity: 'error',
+              summary: 'Food item remove failed!',
+              detail: 'Food item entry was not removed!',
+            });
+          },
+        });
+      },
+      reject: () => {
+        // Do nothing if deletion is canceled
+      },
+    });
+  }
+
   clearAndAddFoodItem() {
     this.foodItemInput = <FoodItems>{};
     this.editingFoodItem = null;
+    this.editingItem = false;
     this.clearAndAddVisible = false;
   }
+
+  openReservationModal(foodItem: FoodItems) {
+    console.log("Food items",foodItem);
+    this.foodItemReservation = {
+      name: foodItem.name,
+      foodItemId:foodItem.foodItemId,
+      currentAvailableQuantity: foodItem.availableQuantity,
+      quantity:null,
+      donorOrgId:foodItem.orgId,
+      receiverOrgId:this.orgId,
+      listPrice:foodItem.listPrice,
+      discountPercentage:foodItem.discountPercentage
+    };
+    console.log("Food items reservations",this.foodItemReservation);
+    this.showReservationModal = true;
+  }
+
+  makeReservation(foodItemReservation:any) {
+    this.reservationService.addReservation(foodItemReservation).subscribe({complete:()=>{
+        console.log("Submited food item",foodItemReservation)
+        this.showReservationModal = false;
+        this.router.navigate(['/reservations']);
+      },
+      error: () => {
+        this.messageService.add({
+          key: 'errorMessage',
+          severity: 'error',
+          summary: 'Reservation failed!',
+          detail: 'Food item reservation failed!',
+        });
+      },});
+
+  }
+
+  cancelReservation() {
+    this.foodItemReservation = {};
+
+    this.showReservationModal = false;
+  }
+
 }

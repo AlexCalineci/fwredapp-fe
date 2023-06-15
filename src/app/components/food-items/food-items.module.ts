@@ -20,6 +20,8 @@ import {AddressModule} from "../address/address.module";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
 import { RippleModule } from 'primeng/ripple';
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   imports: [
@@ -42,6 +44,8 @@ import { RippleModule } from 'primeng/ripple';
     ConfirmPopupModule,
     ToastModule,
     RippleModule,
+    ButtonModule,
+    DialogModule,
   ],
   declarations: [FoodItemsComponent],
 })
