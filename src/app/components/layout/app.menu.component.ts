@@ -39,37 +39,37 @@ export class AppMenuComponent implements OnInit {
         items: [
           {
             label: 'Discounts',
-            icon: 'pi pi-fw pi-exclamation-circle',
+            icon: 'pi pi-fw pi-credit-card',
             routerLink: ['/discounts'],
             visible: this.hasRole('DONOR'),
           },
           {
             label: 'Delivery points',
-            icon: 'pi pi-fw pi-check-square',
+            icon: 'pi pi-fw pi-map-marker',
             routerLink: ['/delivery-points'],
             visible: this.hasRole('DONOR'),
           },
           {
             label: 'Food Items',
-            icon: 'pi pi-fw pi-id-card',
+            icon: 'pi pi-fw pi-list',
             routerLink: ['/food-items'],
             visible: this.hasRole('DONOR') || this.hasRole('RECEIVER'),
           },
           {
             label: 'Donation Map',
-            icon: 'pi pi-fw pi-check-square',
+            icon: 'pi pi-fw pi-map-marker',
             routerLink: ['/donation-map'],
             visible: this.hasRole('RECEIVER'),
           },
           {
             label: 'Reservations',
-            icon: 'pi pi-fw pi-exclamation-circle',
+            icon: 'pi pi-fw pi-shopping-cart',
             routerLink: ['/reservations'],
             visible: this.hasRole('RECEIVER')|| this.hasRole('DONOR'),
           },
           {
             label: 'Feedback ratings',
-            icon: 'pi pi-fw pi-id-card',
+            icon: 'pi pi-fw pi-star',
             routerLink: ['/feedback-ratings'],
             visible: this.hasRole('DONOR') || this.hasRole('RECEIVER'),
           }
@@ -84,7 +84,7 @@ export class AppMenuComponent implements OnInit {
           {
             label: 'Authorize Organisations',
             icon: 'pi pi-fw pi-globe',
-            routerLink: ['/landing'],
+            routerLink: ['/admin'],
             visible: this.hasRole('ADMIN'),
           },
         ],

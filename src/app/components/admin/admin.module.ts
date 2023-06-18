@@ -11,18 +11,17 @@ import { CascadeSelectModule } from "primeng/cascadeselect";
 import { MultiSelectModule } from "primeng/multiselect";
 import { InputTextareaModule } from "primeng/inputtextarea";
 import { InputTextModule } from "primeng/inputtext";
-import {FoodItemsComponent} from "./food-items.component";
+import {AdminComponent} from "./admin.component";
 import {ProgressBarModule} from "primeng/progressbar";
 import {SliderModule} from "primeng/slider";
 import {TableModule} from "primeng/table";
-import {FoodItemsRoutingModule} from "./food-items-routing.module";
-import {AddressModule} from "../address/address.module";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
-import { RippleModule } from 'primeng/ripple';
-import {ButtonModule} from "primeng/button";
-import {DialogModule} from "primeng/dialog";
-import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {RippleModule} from "primeng/ripple";
+import {AdminRoutingModule} from "./admin-routing.module";
+import {MessageModule} from "primeng/message";
+import {AuthService} from "../../services/auth.service";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   imports: [
@@ -41,14 +40,14 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     ProgressBarModule,
     SliderModule,
     TableModule,
-    FoodItemsRoutingModule,
     ConfirmPopupModule,
+    AdminRoutingModule,
     ToastModule,
     RippleModule,
-    ButtonModule,
-    DialogModule,
+    MessageModule,
     ConfirmDialogModule,
   ],
-  declarations: [FoodItemsComponent],
+  providers: [AuthService],
+  declarations: [AdminComponent],
 })
-export class FoodItemsModule {}
+export class AdminModule {}

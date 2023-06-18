@@ -1,10 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { LayoutService } from '../layout/service/app.layout.service';
 import { Router } from '@angular/router';
-import { UsersService } from '../../services/users.service';
 import { UserType } from '../../model/UserType';
-import { UsersFacade, UserState } from '../../services/users.facade';
-import { map, Observable, tap } from 'rxjs';
+import { UsersFacade} from '../../services/users.facade';
 import { Registration } from '../../model/Registration';
 import {MessageService} from "primeng/api";
 

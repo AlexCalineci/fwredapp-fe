@@ -6,6 +6,7 @@ import {AuthService} from "./auth.service";
 import {DashboardStats} from "../model/DashboardStats";
 import {FoodItems} from "../model/FoodItems";
 import {Organizations} from "../model/Organization";
+import {Discounts} from "../model/Discounts";
 
 
 
@@ -38,8 +39,42 @@ export class OrganizationsService {
     return throwError(() => new Error(JSON.stringify(error.error)));
   }
 
-  geOrganizations(orgType:string|undefined):Observable<Organizations[]>{
+  getOrganizationByType(orgType:string|undefined):Observable<Organizations[]>{
     return this.http.get<Organizations[]>( `${environment.BASE_URL + '/organizations/show'}/${orgType}`);
   }
+
+  getAllOrganizations():Observable<Organizations[]>{
+    return this.http.get<Organizations[]>( environment.BASE_URL + '/organizations/show');
+  }
+
+  activateOrganization(organization:Organizations):Observable<Organizations>{
+    let JsonInput = {
+      orgId: organization.orgId
+    };
+    const body = JSON.stringify(JsonInput);
+    return this.http
+      .post<Organizations>(
+        environment.BASE_URL + '/organizations/activate',
+        body,
+        this.getHttpOptions()
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  inactivateOrganization(organization:Organizations):Observable<Organizations>{
+    let JsonInput = {
+      orgId: organization.orgId
+    };
+    const body = JSON.stringify(JsonInput);
+    return this.http
+      .post<Organizations>(
+        environment.BASE_URL + '/organizations/inactivate',
+        body,
+        this.getHttpOptions()
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+
 
 }

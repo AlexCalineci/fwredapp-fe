@@ -10,7 +10,7 @@ import {AddressModule} from "./components/address/address.module";
 import {AuthGuard} from "./services/authguard";
 import {UsersFacade} from "./services/users.facade";
 import {NotfoundComponent} from "./components/notfound/notfound.component";
-import {JwtInterceptor} from "./services/JwtInterceptor";
+import {JwtInterceptorService} from "./services/jwtInterceptor.service";
 
 
 @NgModule({
@@ -26,7 +26,7 @@ import {JwtInterceptor} from "./services/JwtInterceptor";
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-           IconService,AuthGuard,UsersFacade,JwtInterceptor
+           IconService,AuthGuard,UsersFacade,JwtInterceptorService
     ],
     bootstrap: [AppComponent]
 })

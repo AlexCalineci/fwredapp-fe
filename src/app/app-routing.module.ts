@@ -20,6 +20,7 @@ import {NotfoundComponent} from "./components/notfound/notfound.component";
           { path: 'donation-map', loadChildren: () => import('./components/donation-map/donation-map.module').then(m => m.DonationMapModule),canActivate: [AuthGuard] },
           { path: 'reservations', loadChildren: () => import('./components/reservations/reservations.module').then(m => m.ReservationsModule),canActivate: [AuthGuard] },
           { path: 'discounts', loadChildren: () => import('./components/discounts/discounts.module').then(m => m.DiscountsModule),canActivate: [AuthGuard] },
+          { path: 'admin', loadChildren: () => import('./components/admin/admin.module').then(m => m.AdminModule),canActivate: [AuthGuard] },
           { path: 'feedback-ratings', loadChildren: () => import('./components/feedback-ratings/feedback-ratings.module').then(m => m.FeedbackRatingsModule),canActivate: [AuthGuard] },
         ]
       },

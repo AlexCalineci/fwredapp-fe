@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/components/layout/service/app.layout.service';
-import { OsmFacade } from "../../services/osm.facade";
 
 @Component({
   selector: 'app-landing',

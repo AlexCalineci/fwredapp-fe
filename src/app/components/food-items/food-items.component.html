@@ -56,7 +56,7 @@
             <label htmlFor="price">Price(RON)/Unit</label>
             <input
               pInputText
-              id="price"
+              id="listPrice"
               type="number"
               [(ngModel)]="foodItemInput.listPrice"
             />
@@ -382,6 +382,7 @@
             label="Make Reservation"
             class="p-button-success"
             (click)="makeReservation(foodItemReservation)"
+            [disabled]="checkReservationVality(foodItemReservation)"
           ></button>
           <button
             pButton
@@ -395,4 +396,5 @@
       </div>
     </p-dialog>
   </div>
+  <p-confirmDialog></p-confirmDialog>
 </div>

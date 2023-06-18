@@ -173,7 +173,7 @@
                   <td *ngIf="hasRole('RECEIVER')">
                     <div class="flex justify-content-between">
                       <!-- Edit button -->
-                      <button
+                      <button *ngIf="reservation.status == 'PENDING'"
                         pButton
                         pRipple
                         type="button"
@@ -183,13 +183,21 @@
                       ></button>
 
                       <!-- Delete button -->
-                      <button
+                      <button *ngIf="reservation.status == 'PENDING'"
                         pButton
                         pRipple
                         type="button"
                         icon="pi pi-trash"
                         class="p-button-rounded p-button-text"
                         (click)="confirmCancelReservation(reservation)"
+                      ></button>
+                      <button *ngIf="reservation.status == 'PENDING'"
+                              pButton
+                              pRipple
+                              type="button"
+                              icon="pi pi-thumbs-up"
+                              class="p-button-rounded p-button-text"
+                              (click)="finaliseReservation(reservation)"
                       ></button>
                     </div>
                   </td>
@@ -248,6 +256,8 @@
                   pInputText
                   id="quantity"
                   type="number"
+                  [max]="foodItemReservation.currentAvailableQuantity"
+                  [max]="1"
                   [(ngModel)]="foodItemReservation.quantity"
                 />
               </div>
@@ -260,6 +270,7 @@
                 label="Modify Reservation"
                 class="p-button-success"
                 (click)="modifyReservation(foodItemReservation)"
+                [disabled]="checkReservationVality(foodItemReservation)"
               ></button>
               <button
                 pButton

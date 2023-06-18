@@ -73,7 +73,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   modifyReservation(foodItemReservation: any) {
-    this.reservationService.addReservation(foodItemReservation).subscribe({
+    this.reservationService.editReservation(foodItemReservation).subscribe({
       complete: () => {
         this.showReservationModal = false;
         this.loadReservationItemList(this.orgId, this.currentRole);
@@ -95,7 +95,8 @@ export class ReservationsComponent implements OnInit {
       name: reservation.foodItemName,
       foodItemId: reservation.foodItemId,
       quantity: null,
-      currentAvailableQuantity: reservation.availableQuantity, // Update the property name here
+      reservationId:reservation.reservationId,
+      currentAvailableQuantity: reservation.availableQuantity,
     };
     console.log('Food items reservations', this.foodItemReservation);
     this.showReservationModal = true;
@@ -126,7 +127,7 @@ export class ReservationsComponent implements OnInit {
       message: 'Are you sure you want to cancel this reservation?',
       accept: () => {
         this.reservationService
-          .deleteFoodItems(reservation.reservationId)
+          .cancelRservation(reservation.reservationId)
           .subscribe({
             complete: () => {
               this.messageService.add({
@@ -145,6 +146,45 @@ export class ReservationsComponent implements OnInit {
                 severity: 'error',
                 summary: 'Reservation cancel failed!',
                 detail: 'Reservation was not cancelled!',
+              });
+            },
+          });
+      },
+      reject: () => {},
+    });
+  }
+
+  checkReservationVality(foodItemReservation:any):boolean{
+    if(foodItemReservation.currentAvailableQuantity < foodItemReservation.quantity || foodItemReservation.quantity < 1){
+      return true ;
+    }
+    return false;
+  }
+
+  finaliseReservation(reservation: Reservations) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to finalise this reservation?',
+      accept: () => {
+        this.reservationService
+          .finaliseReservation(reservation.reservationId)
+          .subscribe({
+            complete: () => {
+              this.messageService.add({
+                key: 'successMessage',
+                severity: 'success',
+                summary: 'Reservation finalised!',
+                detail: 'Reservation was set to FINALISED!',
+              });
+
+              setTimeout(() => 2000);
+              this.loadReservationItemList(this.orgId, this.currentRole);
+            },
+            error: () => {
+              this.messageService.add({
+                key: 'errorMessage',
+                severity: 'error',
+                summary: 'Reservation not finalised!',
+                detail: 'Reservation was not set to FINALISED!',
               });
             },
           });

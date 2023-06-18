@@ -57,21 +57,16 @@ export class ReservationsService {
       .pipe(catchError(this.handleError));
   }
 
-  editFoodItem(foodItem: FoodItems): Observable<FoodItems> {
+  editReservation(reservation: Reservations): Observable<Reservations> {
     let JsonInput = {
-      discountId:foodItem.discountId,
-      quantityType:foodItem.quantityType,
-      name:foodItem.name,
-      availableQuantity:foodItem.availableQuantity,
-      deliveryPointId:foodItem.deliveryPointId,
-      expirationDate:foodItem.expirationDate,
-      listPrice:foodItem.listPrice,
-      description:foodItem.description
+      reservationId:reservation.reservationId,
+      quantity: reservation.quantity,
+      foodItemId:reservation.foodItemId
     };
     const body = JSON.stringify(JsonInput);
     return this.http
-      .post<FoodItems>(
-        environment.BASE_URL + '/fooditems/edit',
+      .post<Reservations>(
+        environment.BASE_URL + '/reservation/edit',
         body,
         this.getHttpOptions()
       )
@@ -97,17 +92,31 @@ export class ReservationsService {
     return this.http.get<Reservations[]>( `${environment.BASE_URL + '/reservation/show'}/${donorOrgId}/${receiverOrgId}`);
   }
 
-  deleteFoodItems(foodItemId:number|null): Observable<FoodItems[]> {
+  cancelRservation(reservationId:number|null): Observable<Reservations> {
     let JsonInput = {
-      foodItemId: foodItemId,
+      reservationId: reservationId,
     };
     const body = JSON.stringify(JsonInput);
     return this.http
-      .post<FoodItems[]>(
-        environment.BASE_URL + '/fooditems/delete',
+      .post<Reservations>(
+        environment.BASE_URL + '/reservation/cancel',
         body,
         this.getHttpOptions()
       )
       .pipe(catchError(this.handleError));
   }
+  finaliseReservation(reservationId:number|null): Observable<Reservations> {
+    let JsonInput = {
+      reservationId: reservationId,
+    };
+    const body = JSON.stringify(JsonInput);
+    return this.http
+      .post<Reservations>(
+        environment.BASE_URL + '/reservation/finalise',
+        body,
+        this.getHttpOptions()
+      )
+      .pipe(catchError(this.handleError));
+  }
+
 }

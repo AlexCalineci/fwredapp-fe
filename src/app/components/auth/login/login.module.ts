@@ -10,7 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import {ToastModule} from "primeng/toast";
 import {MessageService} from "primeng/api";
 import {MessageModule} from "primeng/message";
-import {JwtInterceptor} from "../../../services/JwtInterceptor";
+import {JwtInterceptorService} from "../../../services/jwtInterceptor.service";
 
 @NgModule({
   imports: [
@@ -24,7 +24,7 @@ import {JwtInterceptor} from "../../../services/JwtInterceptor";
     ToastModule,
     MessageModule,
   ],
-  providers: [MessageService,JwtInterceptor],
+  providers: [MessageService,JwtInterceptorService],
   declarations: [LoginComponent],
 })
 export class LoginModule {}

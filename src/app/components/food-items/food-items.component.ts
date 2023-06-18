@@ -115,6 +115,7 @@ export class FoodItemsComponent implements OnInit {
     foodItem.deliveryPointId = this.selectedScopeDeliveryPoints?.deliveryPointId;
     foodItem.discountId = this.selectedScopeDiscounts?.discountId;
     foodItem.quantityType = this.selectedQuantityType;
+
     if (this.editingFoodItem) {
       this.editingFoodItem.discountId = foodItem.discountId;
       this.editingFoodItem.expirationDate = foodItem.expirationDate;
@@ -124,6 +125,7 @@ export class FoodItemsComponent implements OnInit {
       this.editingFoodItem.availableQuantity = foodItem.availableQuantity;
       this.editingFoodItem.quantityType = foodItem.quantityType;
       this.editingFoodItem.deliveryPointId = foodItem.deliveryPointId;
+      this.editingFoodItem.name = foodItem.name;
 
       this.foodItemService.editFoodItem(this.editingFoodItem).subscribe({
         complete: () => {
@@ -197,7 +199,7 @@ export class FoodItemsComponent implements OnInit {
 
   confirmDeleteFoodItem(foodItem: FoodItems) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this discount?',
+      message: 'Are you sure you want to delete this food item?',
       accept: () => {
         this.foodItemService.deleteFoodItems(foodItem.foodItemId).subscribe({
           complete: () => {
@@ -234,6 +236,12 @@ export class FoodItemsComponent implements OnInit {
     this.clearAndAddVisible = false;
   }
 
+  checkReservationVality(foodItemReservation:any):boolean{
+      if(foodItemReservation.currentAvailableQuantity < foodItemReservation.quantity || foodItemReservation.quantity < 1){
+        return true ;
+        }
+      return false;
+  }
   openReservationModal(foodItem: FoodItems) {
     console.log("Food items",foodItem);
     this.foodItemReservation = {

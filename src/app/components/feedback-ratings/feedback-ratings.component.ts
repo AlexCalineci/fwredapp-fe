@@ -52,7 +52,7 @@ export class FeedbackRatingsComponent implements OnInit {
         })
       )
       .subscribe();
-    this.organizationService.geOrganizations(this.currentRole == 'RECEIVER'?'DONOR':'RECEIVER').subscribe((organizations) => {
+    this.organizationService.getOrganizationByType(this.currentRole == 'RECEIVER'?'DONOR':'RECEIVER').subscribe((organizations) => {
       this.selectedOrganization = organizations[0];
       this.reservationService
         .loadReservationsForFeedback(this.selectedOrganization.orgId, this.orgId)
@@ -101,7 +101,7 @@ export class FeedbackRatingsComponent implements OnInit {
         });
 
         setTimeout(() => 2000);
-        this.feedbackService.loadFeedback(this.orgId,this.currentRole).subscribe();
+        this.feedbackService.loadFeedback(this.orgId,this.currentRole).subscribe(feedbackList =>this.feedbackList = feedbackList);
       },
       error: () => {
         this.messageService.add({

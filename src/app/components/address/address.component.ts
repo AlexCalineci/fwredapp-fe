@@ -8,7 +8,7 @@ import { DeliveryPointsService } from '../../services/delivery-points-service';
 import { switchMap } from 'rxjs';
 import { Address } from '../../model/Address';
 import { map, tap } from 'rxjs/operators';
-import { AddressService } from './address.service';
+import { AddressService } from '../../services/address.service';
 import {OsmService} from "../../services/osm.service";
 
 @Component({

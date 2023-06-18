@@ -70,6 +70,7 @@ export class FoodItemsService {
       expirationDate: foodItem.expirationDate,
       listPrice: foodItem.listPrice,
       description: foodItem.description,
+      foodItemId:foodItem.foodItemId
     };
     const body = JSON.stringify(JsonInput);
     return this.http

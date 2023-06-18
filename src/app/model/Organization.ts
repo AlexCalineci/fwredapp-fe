@@ -4,6 +4,7 @@ export interface Organizations{
   description:string,
   contactPerson:string,
   contactEmail:string,
+  contactPhone:string,
   orgType:string,
   active:string
 }

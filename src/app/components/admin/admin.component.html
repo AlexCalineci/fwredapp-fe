@@ -1,0 +1,190 @@
+<div class="grid justify-content-center">
+  <div class="md:col-12">
+    <div class="card">
+      <h5>Organizations list</h5>
+      <p-table
+        #dt1
+        [value]="organizationsList"
+        dataKey="id"
+        [rows]="10"
+        [loading]="loading"
+        [rowHover]="true"
+        styleClass="p-datatable-gridlines"
+        [paginator]="true"
+        [globalFilterFields]="[
+          'orgId',
+          'name',
+          'description',
+          'contactPerson',
+          'contactEmail',
+          'contactPhone',
+          'legalDetails',
+          'fic',
+          'active',
+          'orgType'
+        ]"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="caption">
+          <div class="flex justify-content-between flex-column sm:flex-row">
+            <button
+              pButton
+              label="Clear"
+              class="p-button-outlined mb-2"
+              icon="pi pi-filter-slash"
+              (click)="clear(dt1)"
+            ></button>
+            <span class="p-input-icon-left mb-2">
+              <i class="pi pi-search"></i>
+              <input
+                pInputText
+                type="text"
+                #filter
+                (input)="onGlobalFilter(dt1, $event)"
+                placeholder="Search Keyword"
+                class="w-full"
+              />
+            </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 12rem">
+              <div class="flex justify-content-between align-items-center">
+                 Id
+                <p-columnFilter
+                  type="text"
+                  field="orgId"
+                  display="menu"
+                  placeholder="Search by organization id"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                 Name
+                <p-columnFilter
+                  type="text"
+                  field="name"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Description
+                <p-columnFilter
+                  type="text"
+                  field="description"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Contact person
+                <p-columnFilter
+                  type="text"
+                  field="contactPerson"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Contact email
+                <p-columnFilter
+                  type="text"
+                  field="contactEmail"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Contact phone
+                <p-columnFilter
+                  type="text"
+                  field="contactPhone"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Active
+                <p-columnFilter
+                  type="text"
+                  field="active"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th style="min-width: 10rem">
+              <div class="flex justify-content-between align-items-center">
+                Type
+                <p-columnFilter
+                  type="text"
+                  field="active"
+                  display="menu"
+                ></p-columnFilter>
+              </div>
+            </th>
+
+            <th style="min-width: 8rem">
+              <div class="flex justify-content-between align-items-center">
+                Actions
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-organizations>
+          <tr>
+            <td>{{ organizations.orgId }}</td>
+            <td>{{ organizations.name}}</td>
+            <td>{{ organizations.description}}</td>
+            <td>{{ organizations.contactPerson}}</td>
+            <td>{{ organizations.contactEmail}}</td>
+            <td>{{ organizations.contactPhone}}</td>
+            <td>{{ organizations.active === 'Y' ? 'Yes' : 'No' }}</td>
+            <td>{{ organizations.orgType}}</td>
+            <td>
+              <button *ngIf="organizations.active =='N'"
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-thumbs-up"
+                class="p-button-rounded p-button-text"
+                (click)="activate(organizations)"
+              ></button>
+
+              <button *ngIf="organizations.active =='Y'"
+                pButton
+                pRipple
+                icon="pi pi-thumbs-down"
+                type="button"
+                class="p-button-rounded p-button-text"
+                (click)="confirmInactivationForOrg(organizations)"
+              ></button>
+            </td>
+          </tr>
+          <p-toast key="successMessage"></p-toast>
+          <p-toast key="errorMessage"></p-toast>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8">No organizations found.</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td colspan="8">Loading organizations data. Please wait.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>
