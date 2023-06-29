@@ -21,7 +21,7 @@
       <div class="p-formgrid grid">
         <div class="field col md:col-3">
           <label htmlFor="street">Street</label>
-          <input pInputText id="street" type="text"  [(ngModel)]="addressInput.street"/>
+          <input pInputText id="street" type="text"  [(ngModel)]="addressInput.street" [required]="true"/>
         </div>
 
         <div class="field col md:col-1">
@@ -34,12 +34,12 @@
         </div>
         <div class="field col-12 md:col-2">
           <label htmlFor="deliveryPointAlias">Delivery Point alias</label>
-          <input [required]="true" pInputText id="deliveryPointAlias" type="text" [(ngModel)]="addressInput.deliveryPointAlias"/>
+          <input [required]="true" pInputText id="deliveryPointAlias" type="text" [(ngModel)]="addressInput.deliveryPointAlias" [required]="true"/>
         </div>
       </div>
       <div class="p-formgrid grid">
         <div class="field col-12 md:col-2">
-          <button pButton pRipple label="Register delivery point" icon="pi pi-plus" class="p-button-success mr-2" (click)="registerDeliveryPoint(addressInput)"></button>
+          <button pButton pRipple label="Register delivery point" icon="pi pi-plus" class="p-button-success mr-2" (click)="registerDeliveryPoint(addressInput)" [disabled]="!isFormValid()"></button>
         </div>
       </div>
 

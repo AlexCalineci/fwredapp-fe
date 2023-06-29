@@ -2,10 +2,8 @@ import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 // @ts-ignore
 import {GeolocationService} from '@ng-web-apis/geolocation';
-import {catchError, Observable, skip, take, tap, throwError} from "rxjs";
-import {map} from "rxjs/operators";
+import {catchError, Observable, throwError} from "rxjs";
 import {Osm} from "../model/Osm";
-import {Discounts} from "../model/Discounts";
 import {environment} from "../../environments/environment";
 import {AuthService} from "./auth.service";
 @Injectable()

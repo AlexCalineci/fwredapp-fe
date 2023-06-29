@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as Leaf from 'leaflet';
 import 'leaflet-routing-machine';
 import { Osm } from '../../model/Osm';
@@ -18,6 +18,7 @@ const shadowUrl = 'assets/marker-shadow.png';
   styleUrls: ['./osm.components.scss'],
 })
 export class OsmComponent implements OnInit {
+
   private map: any;
 
   geolocation: Osm[] = [];

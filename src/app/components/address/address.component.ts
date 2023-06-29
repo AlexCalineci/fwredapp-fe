@@ -5,9 +5,9 @@ import { Countries } from '../../model/Countries';
 import { UsersFacade } from '../../services/users.facade';
 import { MessageService } from 'primeng/api';
 import { DeliveryPointsService } from '../../services/delivery-points-service';
-import { switchMap } from 'rxjs';
+import {switchMap} from 'rxjs';
 import { Address } from '../../model/Address';
-import { map, tap } from 'rxjs/operators';
+import {tap } from 'rxjs/operators';
 import { AddressService } from '../../services/address.service';
 import {OsmService} from "../../services/osm.service";
 
@@ -97,32 +97,43 @@ export class AddressComponent implements OnInit {
       addressInput.streetNumber;
 
     addressInput.cityId = this.selectedScopeCity?.cityId;
-    this.addressService
-      .getAddressCoordinates(addressInput.addressDetails)
-      .subscribe({next:(coords)=>{
+
+
+    this.addressService.getAddressCoordinates(addressInput.addressDetails)
+      .subscribe({
+        next: (coords) => {
           addressInput.longitude = coords?.longitude;
           addressInput.latitude = coords?.latitude;
-        },complete:()=>{
-          this.deliveryPointService.saveDeliveryPoint(addressInput).subscribe({
-            complete: () => {
-              this.messageService.add({
-                key: 'successMessage',
-                severity: 'success',
-                summary: 'Address was Saved',
-                detail: 'Your delivey point has been saved successfully!',
-              });
-              setTimeout(() => {}, 2000);
-            },
-            error: () => {
-              this.messageService.add({
-                key: 'errorMessage',
-                severity: 'error',
-                summary: 'Address registration failed',
-                detail: 'Address registration failed!',
-              });
-            },
-          });
-        },error:()=>{
+          if (this.addressInput.longitude == null || this.addressInput.longitude == undefined) {
+            this.messageService.add({
+              key: 'errorMessage',
+              severity: 'error',
+              summary: 'Address registration failed',
+              detail: 'Address registration coordinates could not be calculated. Check delivery point details!',
+            });
+          } else {
+            this.deliveryPointService.saveDeliveryPoint(addressInput).subscribe({
+              complete: () => {
+                this.messageService.add({
+                  key: 'successMessage',
+                  severity: 'success',
+                  summary: 'Address was Saved',
+                  detail: 'Your delivery point has been saved successfully!',
+                });
+                setTimeout(() => {}, 2000);
+              },
+              error: () => {
+                this.messageService.add({
+                  key: 'errorMessage',
+                  severity: 'error',
+                  summary: 'Address registration failed',
+                  detail: 'Address registration failed!',
+                });
+              },
+            });
+          }
+        },
+        error: () => {
           this.messageService.add({
             key: 'errorMessage',
             severity: 'error',
@@ -131,5 +142,13 @@ export class AddressComponent implements OnInit {
           });
         }
       });
+
+  }
+
+  isFormValid(): boolean {
+    return (
+      !!this.addressInput.street &&
+      !!this.addressInput.deliveryPointAlias
+    );
   }
 }
