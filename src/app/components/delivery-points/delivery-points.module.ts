@@ -20,6 +20,7 @@ import {AddressModule} from "../address/address.module";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
 import {ToastModule} from "primeng/toast";
 import {OsmModule} from "../osm/osm.module";
+import {OsmComponent} from "../osm/osm.component";
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import {OsmModule} from "../osm/osm.module";
     AddressModule,
     OsmModule
   ],
+  providers:[OsmComponent],
   declarations: [DeliveryPointsComponent]
 })
 export class DeliveryPointsModule { }

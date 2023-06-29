@@ -40,7 +40,7 @@ export class OsmService{
       return this.geolocationService.pipe();
   };
 
-  getDeliveryPoints(orgId: number | null): Observable<Osm[]> {
+  getDeliveryPoints(orgId: number | null|undefined): Observable<Osm[]> {
     let JsonInput = {
       orgId: orgId
     };

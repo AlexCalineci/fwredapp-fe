@@ -1,49 +1,43 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, distinctUntilChanged, map, Observable, skip, tap} from 'rxjs';
-import {Osm} from "../model/Osm";
+import {BehaviorSubject, distinctUntilChanged, map} from 'rxjs';
 import {OsmService} from "./osm.service";
-export interface GeoLocationState {
-  geolocation: Osm[]
+import * as Leaf from 'leaflet';
+
+export interface OsmState {
+  isMapInitialized: boolean|null;
+  map: Leaf.Map|undefined;
 }
-let _state: GeoLocationState = {
-  geolocation: []
+let _state: OsmState = {
+  isMapInitialized: false,
+  map: undefined
 };
 @Injectable()
 export class OsmFacade {
-  private localStore = new BehaviorSubject<GeoLocationState>(_state);
+  private localStore = new BehaviorSubject<OsmState>(_state);
   private localState$ = this.localStore.asObservable();
 
-  geolocation$ = this.localState$.pipe(
-    map((state) => state.geolocation),
+  isMapInitialized$ = this.localState$.pipe(
+    map((state) => state.isMapInitialized),
+    distinctUntilChanged()
+  );
+
+  map$ = this.localState$.pipe(
+    map((state) => state.map),
     distinctUntilChanged()
   );
   constructor(private osmService: OsmService) {
-    this.loadGeolocation().pipe().subscribe();
-  }
-  setGeolocation(geolocation: Osm[]): void {
-    this.updateState({ geolocation });
   }
 
-  private updateState(state: GeoLocationState): void {
+  public setIsMapInitialized(isMapInitialized: boolean): void {
+    this.updateState({..._state,isMapInitialized });
+  }
+
+  public setMap(map: Leaf.Map|undefined): void {
+    this.updateState({..._state,map });
+  }
+
+  private updateState(state: OsmState): void {
     this.localStore.next(state);
-  }
-
-  loadGeolocation(): Observable<void> {
-    return this.osmService.getDefaultPosition().pipe(
-      tap((position) => {
-        const geoLocationArray: Osm[] = [
-          {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            orgId:0,
-            deliveryPointAlias:'',
-            title:''
-          }
-        ];
-        this.setGeolocation(geoLocationArray);
-      }),
-      map(() => {})
-    );
   }
 
 }

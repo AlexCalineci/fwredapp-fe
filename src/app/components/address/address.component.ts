@@ -9,7 +9,8 @@ import {switchMap} from 'rxjs';
 import { Address } from '../../model/Address';
 import {tap } from 'rxjs/operators';
 import { AddressService } from '../../services/address.service';
-import {OsmService} from "../../services/osm.service";
+import {coordinate, source} from "openlayers";
+import {OsmComponent} from "../osm/osm.component";
 
 @Component({
   selector: 'app-address',
@@ -27,7 +28,7 @@ export class AddressComponent implements OnInit {
     private messageService: MessageService,
     private deliveryPointService: DeliveryPointsService,
     private addressService: AddressService,
-    private osmService:OsmService
+    private osmComponent:OsmComponent
   ) {}
   selectedScopeCity: Cities | null = null;
   selectedScopeRegion: Regions | null = null;
@@ -112,8 +113,11 @@ export class AddressComponent implements OnInit {
               detail: 'Address registration coordinates could not be calculated. Check delivery point details!',
             });
           } else {
-            this.deliveryPointService.saveDeliveryPoint(addressInput).subscribe({
+            this.deliveryPointService.saveDeliveryPoint(addressInput).subscribe({next:()=>{
+
+              },
               complete: () => {
+                this.osmComponent.initializeMap(addressInput.orgId);
                 this.messageService.add({
                   key: 'successMessage',
                   severity: 'success',
@@ -121,6 +125,7 @@ export class AddressComponent implements OnInit {
                   detail: 'Your delivery point has been saved successfully!',
                 });
                 setTimeout(() => {}, 2000);
+
               },
               error: () => {
                 this.messageService.add({

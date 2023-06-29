@@ -11,6 +11,8 @@ import { AuthGuard } from './services/authguard';
 import { UsersFacade } from './services/users.facade';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { JwtInterceptorService } from './services/jwtInterceptor.service';
+import {OsmFacade} from "./services/osm.facade";
+import {OsmComponent} from "./components/osm/osm.component";
 
 @NgModule({
   declarations: [AppComponent, NotfoundComponent],
@@ -20,6 +22,7 @@ import { JwtInterceptorService } from './services/jwtInterceptor.service';
     LandingModule,
     AuthModule,
     AddressModule,
+
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
@@ -27,6 +30,9 @@ import { JwtInterceptorService } from './services/jwtInterceptor.service';
     AuthGuard,
     UsersFacade,
     JwtInterceptorService,
+    OsmFacade,
+    OsmComponent
+
   ],
   bootstrap: [AppComponent],
 })
